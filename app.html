@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheme-Cum-Plan Builder | MoPSE Zimbabwe</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="flag-strip" aria-hidden="true">
+    <span class="f-green"></span><span class="f-yellow"></span><span class="f-red"></span><span class="f-black"></span><span class="f-red"></span><span class="f-yellow"></span><span class="f-green"></span>
+  </div>
+  <div class="header-inner">
+    <div>
+      <p class="ministry">Ministry of Primary and Secondary Education &mdash; ZIMBABWE</p>
+      <h1>Scheme-Cum-Plan Builder</h1>
+      <p class="subtitle" data-i18n="subtitle">Integrated schemes of work + lesson plans &bull; per Teacher Training Script (Scheme-Cum-Planning)</p>
+    </div>
+    <div class="header-actions">
+      <span id="saveState" class="save-state" title="All entries autosave in this browser">Saved &#10003;</span>
+      <select id="uiLang" title="Interface language">
+        <option value="en">English</option>
+        <option value="sh">ChiShona</option>
+        <option value="nd">IsiNdebele</option>
+      </select>
+      <a class="btn small" href="dashboard.html">Dashboard</a>
+      <button type="button" class="btn small" id="btnPrintTop">Print</button>
+      <button type="button" class="btn small primary" id="btnWordTop">Word</button>
+      <button type="button" class="btn small ghost" id="btnLogout">Log out</button>
+      <div class="edit-mode-controls" style="display: flex; gap: 0.3rem; margin-left: 0.5rem;">
+        <button type="button" class="btn small" id="btnModeView" title="View mode" disabled>View</button>
+        <button type="button" class="btn small" id="btnModeEdit" title="Edit mode">Edit</button>
+        <button type="button" class="btn small danger" id="btnModeDelete" title="Delete mode">Delete</button>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button type="button" class="tab active" data-tab="overview" data-i18n="tab_overview" role="tab">1. Term Overview</button>
+    <button type="button" class="tab" data-tab="entries" data-i18n="tab_entries" role="tab">2. Scheme Entries</button>
+    <button type="button" class="tab" data-tab="preview" data-i18n="tab_preview" role="tab">3. Table Preview</button>
+    <button type="button" class="tab" data-tab="repo" data-i18n="tab_repo" role="tab">4. Media Repository</button>
+    <button type="button" class="tab" data-tab="guides" data-i18n="tab_guides" role="tab">5. Guides</button>
+    <button type="button" class="tab" data-tab="backup" data-i18n="tab_backup" role="tab">6. Export / Backup</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ TAB 1: TERM OVERVIEW (Section A) ============ -->
+<section id="tab-overview" class="tabpage active">
+  <h2 data-i18n="h_overview">Section A: Term Overview</h2>
+  <div class="card">
+    <label>Scheme name <input type="text" id="ovName" placeholder="e.g. Combined Science Form 2 Term 1"></label>
+  </div>
+  <div class="card grid-3">
+    <label>School <input type="text" id="ovSchool" placeholder="e.g. Harare Secondary School"></label>
+    <label>Subject <input type="text" id="ovSubject" placeholder="e.g. Combined Science"></label>
+    <label>Grade / Form <input type="text" id="ovGrade" placeholder="e.g. Form 2"></label>
+    <label>Teacher <input type="text" id="ovTeacher" placeholder="e.g. Mr. T. Moyo"></label>
+    <label>Term
+      <select id="ovTerm">
+        <option value="1">Term 1</option>
+        <option value="2">Term 2</option>
+        <option value="3">Term 3</option>
+      </select>
+    </label>
+    <label>Year <input type="number" id="ovYear" min="2000" max="2100" value="2026"></label>
+  </div>
+  <div class="card">
+    <label>Document language (table headers &amp; labels)
+      <select id="ovDocLang">
+        <option value="en">English</option>
+        <option value="sh">ChiShona</option>
+        <option value="nd">IsiNdebele</option>
+      </select>
+    </label>
+  </div>
+  <div class="card">
+    <h3>Term Objectives</h3>
+    <label>Knowledge <textarea id="ovObjK" rows="2" placeholder="What learners will know by end of term"></textarea></label>
+    <label>Skills <textarea id="ovObjS" rows="2" placeholder="What learners will be able to do"></textarea></label>
+    <label>Values <textarea id="ovObjV" rows="2" placeholder="Dispositions to develop"></textarea></label>
+    <label>Community Resources Planned
+      <textarea id="ovCommunity" rows="2" placeholder="e.g. Sekuru Chiweshe (traditional brewer)"></textarea>
+    </label>
+  </div>
+  <p class="hint">Policy basis: Education Act Chapter 25:04 Section 62 &bull; Director&rsquo;s Circular No. 14 of 2019 &bull; Secretary&rsquo;s Circular No. 3 of 2021.</p>
+</section>
+
+<!-- ============ TAB 2: SCHEME ENTRIES ============ -->
+<section id="tab-entries" class="tabpage">
+  <div class="entries-toolbar">
+    <h2 data-i18n="h_entries">Scheme Entries (one card = one table row)</h2>
+    <div>
+      <button type="button" class="btn primary" id="btnAutoCompile" data-i18n="btn_autocompile">Auto-compile from topics</button>
+      <button type="button" class="btn" id="btnAddEntry" data-i18n="btn_add">+ Add Week Entry</button>
+      <button type="button" class="btn ghost" id="btnLoadExample" data-i18n="btn_example">Load Worked Example</button>
+      <select id="bulkLang" title="Content language for all rows">
+        <option value="en">English</option>
+        <option value="sh">ChiShona</option>
+        <option value="nd">IsiNdebele</option>
+      </select>
+      <button type="button" class="btn ghost" id="btnBulkLang">Convert all rows</button>
+    </div>
+  </div>
+  <div id="entriesList"></div>
+</section>
+
+<!-- ============ TAB 3: TABLE PREVIEW ============ -->
+<section id="tab-preview" class="tabpage">
+  <h2 data-i18n="h_preview">Scheme-Cum-Plan (Table Format)</h2>
+  <div id="qualityBox" class="card quality"></div>
+  <div class="preview-toolbar no-print">
+    <button type="button" class="btn primary" id="btnPrint" data-i18n="btn_print">Print / Save as PDF</button>
+    <button type="button" class="btn" id="btnWord" data-i18n="btn_word">Download Word (.doc)</button>
+    <button type="button" class="btn ghost" id="btnCsv" data-i18n="btn_csv">Download CSV</button>
+  </div>
+  <div id="printArea">
+    <div class="doc-head">
+      <p class="doc-ministry">Ministry of Primary and Secondary Education &mdash; ZIMBABWE</p>
+      <h2 id="docTitle">SCHEME-CUM-PLAN</h2>
+    </div>
+    <div id="previewOverview"></div>
+    <div class="table-wrap">
+      <table id="schemeTable" class="scheme-table">
+        <thead>
+          <tr>
+            <th id="th_week">Week / Period</th>
+            <th id="th_topic">Topic / Content</th>
+            <th id="th_obj">Objectives</th>
+            <th id="th_comp">Competences / Skills</th>
+            <th id="th_ref">References / Media</th>
+            <th id="th_meth">Methods and Activities</th>
+            <th id="th_eval">Evaluation</th>
+          </tr>
+        </thead>
+        <tbody id="schemeBody"></tbody>
+      </table>
+    </div>
+    <div class="sign-row">
+      <span><span id="signTeacher">Teacher:</span> ____________________</span>
+      <span><span id="signHod">HOD:</span> ____________________</span>
+      <span><span id="signHead">Head:</span> ____________________</span>
+      <span><span id="signDate">Date:</span> ____________________</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 4: MEDIA REPOSITORY ============ -->
+<section id="tab-repo" class="tabpage">
+  <h2 data-i18n="h_repo">Media Repository &mdash; Syllabus &amp; Textbooks</h2>
+  <p class="hint">Upload syllabus documents and textbooks here. Attach them to any entry&rsquo;s <strong>References / Media</strong> column. Files are stored in this browser (IndexedDB) so they persist between visits on this device.</p>
+  <div class="card">
+    <h3 data-i18n="repo_upload_h">Upload documents</h3>
+    <div class="upload-row">
+      <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.epub,.jpg,.jpeg,.png,.mp4">
+      <select id="fileKind">
+        <option value="syllabus">Syllabus</option>
+        <option value="textbook">Textbook</option>
+        <option value="other">Other resource</option>
+      </select>
+      <button type="button" class="btn primary" id="btnUpload" data-i18n="btn_upload">Upload</button>
+    </div>
+    <p class="hint" id="repoStatus"></p>
+  </div>
+  <div class="card">
+    <h3>Syllabus library &mdash; save once, reference anytime</h3>
+    <p class="hint">Paste a syllabus (or its objectives section) once and save it under a reference name. In Auto-compile you then just pick the reference plus a focus code instead of pasting again.</p>
+    <label>Reference name <input type="text" id="sylName" placeholder="e.g. Combined Science Form 2"></label>
+    <label>Syllabus text<textarea id="sylText" rows="6" placeholder="Paste syllabus content here, keeping syllabus codes if present, e.g.&#10;5.2.4  understand fermentation processes"></textarea></label>
+    <p><button type="button" class="btn primary" id="btnSylSave">Save syllabus</button></p>
+    <div id="sylList"></div>
+  </div>
+  <div class="card">
+    <h3 data-i18n="repo_stored_h">Stored documents</h3>
+    <div class="repo-filters">
+      <button type="button" class="chip active" data-filter="all">All</button>
+      <button type="button" class="chip" data-filter="syllabus">Syllabi</button>
+      <button type="button" class="chip" data-filter="textbook">Textbooks</button>
+      <button type="button" class="chip" data-filter="other">Other</button>
+    </div>
+    <table class="repo-table">
+      <thead><tr><th>Document</th><th>Type</th><th>Size</th><th>Actions</th></tr></thead>
+      <tbody id="repoBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ TAB 5: GUIDES ============ -->
+<section id="tab-guides" class="tabpage">
+  <h2 data-i18n="h_guides">Planning Guides (from the Training Script)</h2>
+
+  <div class="card">
+    <h3>SMART Objectives Framework (Table 4)</h3>
+    <table class="guide-table">
+      <thead><tr><th>Letter</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>S &ndash; Specific</strong></td><td>Clear what learners achieve</td><td>&ldquo;Convert decimal 0&ndash;15 to binary&rdquo;</td></tr>
+        <tr><td><strong>M &ndash; Measurable</strong></td><td>Observable outcomes</td><td>&ldquo;Explain two traditional counting methods&rdquo;</td></tr>
+        <tr><td><strong>A &ndash; Achievable</strong></td><td>Realistic for time/resources</td><td>&ldquo;Represent numbers 0&ndash;15 in binary using beads&rdquo;</td></tr>
+        <tr><td><strong>R &ndash; Relevant</strong></td><td>Aligned with syllabus; meaningful</td><td>&ldquo;Apply binary to computer data storage AND traditional pattern encoding&rdquo;</td></tr>
+        <tr><td><strong>T &ndash; Time-bound</strong></td><td>Achievable within timeframe</td><td>&ldquo;By end of 80-minute lesson&rdquo;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Four Objective Dimensions (Table 5)</h3>
+    <table class="guide-table">
+      <thead><tr><th>Dimension</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Knowledge</strong></td><td>What learners should KNOW</td><td>&ldquo;Know binary number system and traditional counting&rdquo;</td></tr>
+        <tr><td><strong>Skills</strong></td><td>What learners can DO</td><td>&ldquo;Convert numbers; create patterns&rdquo;</td></tr>
+        <tr><td><strong>Values</strong></td><td>Dispositions to develop</td><td>&ldquo;Appreciate mathematical thinking across cultures&rdquo;</td></tr>
+        <tr><td><strong>Indicators</strong></td><td>Observable evidence</td><td>&ldquo;8/10 correct conversions; explains cultural significance&rdquo;</td></tr>
+      </tbody>
+    </table>
+    <p class="hint">Weak: &ldquo;Learners will learn about algorithms.&rdquo; Strong: &ldquo;By end of lesson, learners will define algorithms (knowledge); create a 5-step algorithm and compare with traditional organisational methods, dare/nhimbe (skills); appreciate systematic problem-solving in both contexts (values); write a 5-step algorithm and identify 2 similarities (indicators).&rdquo;</p>
+  </div>
+
+  <div class="card">
+    <h3>Recommended Methodologies (Table 6)</h3>
+    <table class="guide-table">
+      <thead><tr><th>Method</th><th>When to Use</th><th>Indigenous Knowledge Application</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Project-Based Learning</strong></td><td>Synthesis and application</td><td>Projects connect to heritage/traditional knowledge</td></tr>
+        <tr><td><strong>Inquiry-Based</strong></td><td>Analysis, comparison</td><td>Start with observation; research includes traditional knowledge</td></tr>
+        <tr><td><strong>Collaborative Learning</strong></td><td>Teamwork skills</td><td>Groups structured like dare/nhimbe; Ubuntu/Unhu/Vumunhu</td></tr>
+        <tr><td><strong>Experiential / Hands-on</strong></td><td>Skill development</td><td>Learn traditional practices by doing; experts demonstrate</td></tr>
+        <tr><td><strong>Storytelling</strong></td><td>Cultural significance</td><td>Elders share stories; learners analyse embedded knowledge</td></tr>
+        <tr><td><strong>Community-Based</strong></td><td>Local resources essential</td><td>Visit heritage sites; observe practices; interview knowledge holders</td></tr>
+      </tbody>
+    </table>
+    <p class="hint"><strong>Key point:</strong> methodology must match the objective. Indigenous knowledge and school-based projects should be woven throughout &mdash; in objectives, activities and resources &mdash; not added as afterthoughts.</p>
+  </div>
+
+  <div class="card">
+    <h3>Assessment Principles (Table 7) &amp; Reflection Questions (Table 8)</h3>
+    <table class="guide-table">
+      <thead><tr><th>Principle</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Authentic</strong></td><td>Assess in real-world contexts</td></tr>
+        <tr><td><strong>Continuous</strong></td><td>Formative (ongoing) and summative (periodic)</td></tr>
+        <tr><td><strong>Multiple methods</strong></td><td>Observation, product, performance, tests, self/peer assessment</td></tr>
+        <tr><td><strong>Holistic</strong></td><td>Knowledge, skills and values; process matters</td></tr>
+        <tr><td><strong>Transparent criteria</strong></td><td>Share rubrics in advance; clear success criteria</td></tr>
+      </tbody>
+    </table>
+    <p class="hint">Reflect after each lesson: Did learners achieve objectives (evidence)? Did methods enable learning? Did assessment measure objectives? Were objectives, methods and assessment aligned &mdash; and was indigenous knowledge authentic?</p>
+  </div>
+
+  <div class="card">
+    <h3>Competence Framework (Table 1)</h3>
+    <table class="guide-table">
+      <thead><tr><th>Beginning</th><th>Developing</th><th>Embedding</th><th>Proficient</th></tr></thead>
+      <tbody><tr>
+        <td>Understand the need for planning but struggle to connect yearly objectives to daily lessons; plans lack alignment.</td>
+        <td>Create basic scheme-cum-plans with some alignment; sometimes identify appropriate methods and assessment.</td>
+        <td>Regularly create well-aligned plans with clear vertical coherence; select appropriate methodologies and aligned assessments.</td>
+        <td>Confidently create comprehensive plans with seamless alignment; strategically select diverse methodologies and sophisticated assessments.</td>
+      </tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ TAB 6: EXPORT / BACKUP ============ -->
+<section id="tab-backup" class="tabpage">
+  <h2 data-i18n="h_backup">Export / Backup</h2>
+  <div class="card grid-2">
+    <div>
+      <h3 data-i18n="backup_docs_h">Documents</h3>
+      <p class="hint">Print uses the official 7-column table format. Word export downloads an editable .doc file.</p>
+      <p><button type="button" class="btn primary" id="btnPrint2" data-i18n="btn_print">Print / Save as PDF</button></p>
+      <p><button type="button" class="btn" id="btnWord2" data-i18n="btn_word">Download Word (.doc)</button></p>
+      <p><button type="button" class="btn ghost" id="btnCsv2" data-i18n="btn_csv">Download CSV</button></p>
+    </div>
+    <div>
+      <h3 data-i18n="backup_data_h">Data backup</h3>
+      <p class="hint">JSON backup saves all entries and overview (repository files stay in this browser).</p>
+      <p><button type="button" class="btn" id="btnExportJson" data-i18n="btn_exportjson">Export JSON backup</button></p>
+      <p><input type="file" id="importJson" accept=".json,application/json"></p>
+      <p><button type="button" class="btn danger" id="btnClearAll" data-i18n="btn_clear">Clear all data</button></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Auto-compile modal -->
+<div id="compileModal" class="modal hidden">
+  <div class="modal-box wide">
+    <h3 data-i18n="modal_compile_title">Auto-compile entries from syllabus topics</h3>
+    <p class="hint">List each topic with its syllabus code, the <strong>number of lessons needed to complete it</strong>, and textbook pages. One full scheme-cum-plan row is drafted per lesson. Paste syllabus text below so term objectives and cross-cutting themes can be picked up from it. Drafts are for review and editing.</p>
+    <div class="inline-3">
+      <label>Subject <input type="text" id="cmpSubject" placeholder="e.g. Combined Science"></label>
+      <label>Minutes per period <input type="number" id="cmpMinutes" value="35" min="10" max="300"></label>
+      <label>Default methodology
+        <select id="cmpMethod">
+          <option>Inquiry-Based</option>
+          <option>Experiential / Hands-on</option>
+          <option>Collaborative Learning</option>
+          <option>Project-Based Learning</option>
+          <option>Storytelling</option>
+          <option>Community-Based</option>
+        </select>
+      </label>
+    </div>
+    <div class="inline-3">
+      <label>Scheming period (weeks) <input type="text" id="cmpPeriodWeeks" placeholder="e.g. 1-6 or 6"></label>
+      <label>Lessons per week <input type="number" id="cmpLessonsPerWeek" value="1" min="1" max="10"></label>
+      <label>Starting week number <input type="number" id="cmpStartWeek" value="1" min="1" max="52"></label>
+    </div>
+    <div class="inline-3">
+      <label>Week ending dates (one per week, optional) <input type="text" id="cmpWeekEnding" placeholder="e.g. 2026-01-12, 2026-01-19, 2026-01-26"></label>
+      <label>Term start date <input type="date" id="cmpTermStart"></label>
+      <label>Term end date <input type="date" id="cmpTermEnd"></label>
+    </div>
+    <label>Content language (for generated drafts)
+      <select id="cmpLang">
+        <option value="en">English</option>
+        <option value="sh">ChiShona</option>
+        <option value="nd">IsiNdebele</option>
+      </select>
+    </label>
+    <label>Cross-cutting theme
+      <select id="cmpCross">
+        <option value="auto">Auto-detect from syllabus / topic</option>
+        <option value="">None</option>
+        <option>ICT</option>
+        <option>Gender equality</option>
+        <option>HIV and AIDS</option>
+        <option>Human rights</option>
+        <option>Environmental sustainability</option>
+        <option>Disaster risk reduction</option>
+        <option>Financial literacy</option>
+        <option>Heritage studies</option>
+      </select>
+    </label>
+    <label>Topics</label>
+    <div class="topic-grid-head"><span data-i18n="grid_topic">Topic</span><span data-i18n="grid_code">Syllabus code</span><span data-i18n="grid_subtopic">Sub-topics</span><span data-i18n="grid_type">Type</span><span data-i18n="grid_lessons">Lessons</span><span data-i18n="grid_pages">Syllabus pages</span><span data-i18n="grid_textbooks">Textbooks (one per line)</span><span></span></div>
+    <div id="cmpTopicRows"></div>
+    <p><button type="button" class="btn small" id="btnAddTopicRow">+ Add topic</button>
+    <button type="button" class="btn small" id="btnAddStandaloneRow">+ Add test/exercise</button></p>
+    <div class="inline-2">
+      <label>Textbook (applies to all rows)<input type="text" id="cmpTextbook" placeholder="e.g. New Combined Science Form 2"></label>
+      <label>Shared materials<input type="text" id="cmpMaterials" placeholder="e.g. Sugar, yeast, water, balloons"></label>
+    </div>
+    <div class="inline-2">
+      <label>Community expert / video<input type="text" id="cmpExpert" placeholder="e.g. Sekuru Chiweshe (traditional brewer)"></label>
+      <label>Digital resources<input type="text" id="cmpDigital" placeholder="e.g. Video clip, simulation link"></label>
+    </div>
+    <label>Syllabus reference (saved library)
+      <select id="cmpSylRef"></select>
+    </label>
+    <label>Focus reference &mdash; syllabus code or keyword to extract from (optional)
+      <input type="text" id="cmpSylFocus" placeholder="e.g. 5.2">
+    </label>
+    <div id="cmpPasteWrap">
+      <label>Or paste syllabus text<textarea id="cmpSyllabus" rows="5" placeholder="Paste syllabus objectives here, e.g.&#10;Learners should be able to:&#10;understand fermentation processes"></textarea></label>
+    </div>
+    <p><button type="button" class="btn primary" id="btnDoCompile" data-i18n="btn_generate">Generate drafts</button>
+    <button type="button" class="btn ghost" id="btnCompileClose" data-i18n="btn_close">Close</button></p>
+  </div>
+</div>
+
+<!-- Attach-file modal -->
+<div id="attachModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Attach from Repository</h3>
+    <p class="hint">Appends a textbook / syllabus reference (with page prompt) to the entry&rsquo;s References / Media.</p>
+    <div id="attachList"></div>
+    <p><button type="button" class="btn ghost" id="btnAttachClose" data-i18n="btn_close">Close</button></p>
+  </div>
+</div>
+
+<!-- Preview-file modal -->
+<div id="fileModal" class="modal hidden">
+  <div class="modal-box wide">
+    <h3 id="fileModalTitle">Document</h3>
+    <div id="fileModalBody"></div>
+    <p><button type="button" class="btn ghost" id="btnFileClose" data-i18n="btn_close">Close</button></p>
+  </div>
+</div>
+
+<footer class="app-footer">
+  <p>Scheme-Cum-Plan Builder &bull; Offline &bull; Data stays in this browser &bull; Format per MoPSE Teacher Training Script: Scheme-Cum-Planning &bull; <span id="appVer"></span></p>
+</footer>
+
+<script src="auth.js"></script>
+<script src="store.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

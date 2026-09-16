@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Scheme-Cum-Plan Builder</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header slim">
+  <div class="flag-strip" aria-hidden="true">
+    <span class="f-green"></span><span class="f-yellow"></span><span class="f-red"></span><span class="f-black"></span><span class="f-red"></span><span class="f-yellow"></span><span class="f-green"></span>
+  </div>
+  <div class="header-inner">
+    <div>
+      <p class="ministry">Ministry of Primary and Secondary Education &mdash; ZIMBABWE</p>
+      <h1>Dashboard</h1>
+      <p class="subtitle" id="dashWelcome"></p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn small primary" id="btnNewScheme">+ New scheme</button>
+      <button type="button" class="btn small" id="btnLogout">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="stat-grid">
+    <div class="card stat"><span class="stat-num" id="statSchemes">0</span><span class="stat-label">Schemes</span></div>
+    <div class="card stat"><span class="stat-num" id="statEntries">0</span><span class="stat-label">Lesson entries</span></div>
+    <div class="card stat"><span class="stat-num" id="statDocs">0</span><span class="stat-label">Repository documents</span></div>
+    <div class="card stat"><span class="stat-num" id="statComplete">0%</span><span class="stat-label">Active scheme complete</span></div>
+  </div>
+
+  <div class="card">
+    <h2>My schemes</h2>
+    <table class="repo-table">
+      <thead><tr><th>Scheme</th><th>Subject</th><th>Grade / Term</th><th>Entries</th><th>Updated</th><th>Actions</th></tr></thead>
+      <tbody id="schemeRows"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="auth.js"></script>
+<script src="store.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in | Scheme-Cum-Plan Builder</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header slim">
+  <div class="flag-strip" aria-hidden="true">
+    <span class="f-green"></span><span class="f-yellow"></span><span class="f-red"></span><span class="f-black"></span><span class="f-red"></span><span class="f-yellow"></span><span class="f-green"></span>
+  </div>
+  <div class="header-inner">
+    <div>
+      <p class="ministry">Ministry of Primary and Secondary Education &mdash; ZIMBABWE</p>
+      <h1>Scheme-Cum-Plan Builder</h1>
+    </div>
+    <div class="header-actions"><a class="btn small" href="index.html">Home</a></div>
+  </div>
+</header>
+
+<main class="narrow">
+  <div id="lockBanner" class="card hidden">
+    <p><strong>System locked by the administrator.</strong> Teacher logins are disabled until the admin unlocks the system.</p>
+  </div>
+
+  <div class="card hidden" id="setupCard">
+    <h2>First-time setup: create the administrator</h2>
+    <p class="hint">The administrator approves teachers, issues their PINs, and can lock the system. This is done once.</p>
+    <label>Administrator name <input type="text" id="setupName" placeholder="e.g. School Head"></label>
+    <label>Admin PIN (min 4 digits) <input type="password" id="setupPin" inputmode="numeric" maxlength="12"></label>
+    <p><button type="button" class="btn primary" id="btnSetup">Create administrator</button></p>
+    <p class="hint" id="setupMsg"></p>
+  </div>
+
+  <div class="card">
+    <h2>Teacher log in</h2>
+    <p class="hint">Log in with the PIN provided by your administrator. New here? Request access below and wait for approval.</p>
+    <div id="memberList"></div>
+  </div>
+
+  <div class="card" id="reqCard">
+    <h2>Request access</h2>
+    <label>Full name <input type="text" id="reqName" placeholder="e.g. T. Moyo"></label>
+    <p><button type="button" class="btn" id="btnRequest">Send request</button></p>
+    <p class="hint" id="reqMsg"></p>
+  </div>
+
+  <div class="card hidden" id="pinCard">
+    <h2>Enter PIN</h2>
+    <p class="hint" id="pinWho"></p>
+    <label>PIN <input type="password" id="pinInput" inputmode="numeric" maxlength="12"></label>
+    <p><button type="button" class="btn primary" id="btnPinGo">Log in</button>
+    <button type="button" class="btn ghost" id="btnPinBack">Back</button></p>
+    <p class="hint" id="pinMsg"></p>
+  </div>
+
+  <div class="card">
+    <h2>Administrator</h2>
+    <div id="adminLoginBox">
+      <label>Admin PIN <input type="password" id="adminPin" inputmode="numeric" maxlength="12"></label>
+      <p><button type="button" class="btn" id="btnAdminGo">Admin log in</button></p>
+      <p class="hint" id="adminMsg"></p>
+    </div>
+    <div id="adminPanel" class="hidden">
+      <p class="hint" id="adminWho"></p>
+      <p>
+        <a class="btn small primary" href="dashboard.html">Enter dashboard</a>
+        <button type="button" class="btn small" id="lockBtn">Lock system</button>
+        <button type="button" class="btn small ghost" id="btnAdminOut">Admin log out</button>
+      </p>
+      <p class="hint" id="lockState"></p>
+      <h3>Pending requests</h3>
+      <div id="pendList"></div>
+      <h3>Add member directly</h3>
+      <p class="hint">Enrol a teacher yourself (e.g. name received by phone) and issue their PIN immediately.</p>
+      <label>Name <input type="text" id="addName" placeholder="Teacher name"></label>
+      <label>PIN to issue (min 4 digits) <input type="password" id="addPin" inputmode="numeric" maxlength="12"></label>
+      <p><button type="button" class="btn small" id="btnAddMember">Add approved member</button></p>
+      <p class="hint" id="addMsg"></p>
+      <h3>Share access with other devices</h3>
+      <p class="hint">Profiles live per browser. Export this member list and send it (e.g. WhatsApp) to a teacher&rsquo;s phone or computer &mdash; they import it on the login page and can log in there with their admin-issued PIN.</p>
+      <p><button type="button" class="btn small" id="btnExpMembers">Export members file</button>
+      <input type="file" id="importMembers" accept=".json,application/json"></p>
+      <p class="hint" id="impMsg"></p>
+      <h3>Approved members</h3>
+      <div id="memList"></div>
+    </div>
+  </div>
+</main>
+
+<script src="auth.js"></script>
+<script src="store.js"></script>
+<script>
+(function () {
+  'use strict';
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function $(id) { return document.getElementById(id); }
+  var pinTarget = null;
+  var adminOn = false;
+
+  function refresh() {
+    var hasAdmin = Auth.hasAdmin();
+    $('setupCard').classList.toggle('hidden', hasAdmin);
+    var locked = Auth.isLocked();
+    $('lockBanner').classList.toggle('hidden', !locked);
+    var me = null;
+    try { me = Auth.current(); } catch (e) {}
+    adminOn = !!(me && me.role === 'admin');
+    $('adminPanel').classList.toggle('hidden', !adminOn);
+    $('adminLoginBox').classList.toggle('hidden', adminOn);
+    if (adminOn) {
+      $('adminWho').textContent = 'Signed in as administrator: ' + me.name;
+      $('lockState').textContent = locked ? 'Status: LOCKED \u2013 teachers cannot log in.' : 'Status: open \u2013 approved teachers can log in.';
+      $('lockBtn').textContent = locked ? 'Unlock system' : 'Lock system';
+    }
+    renderMembers();
+    if (adminOn) renderAdminLists();
+  }
+
+  function renderMembers() {
+    var members = Auth.members();
+    var box = $('memberList');
+    if (!members.length) {
+      box.innerHTML = '<p class="hint">No approved members yet.</p>';
+      return;
+    }
+    box.innerHTML = members.map(function (p) {
+      return '<div class="attach-item"><span><strong>' + esc(p.name) + '</strong></span>' +
+        '<span><button type="button" class="btn small" data-open="' + p.id + '">Log in</button></span></div>';
+    }).join('');
+    var pend = Auth.pending().length;
+    if (pend) box.innerHTML += '<p class="hint">' + pend + ' request(s) awaiting admin approval.</p>';
+  }
+
+  function renderAdminLists() {
+    var pend = Auth.pending();
+    $('pendList').innerHTML = pend.length ? pend.map(function (p) {
+      return '<div class="attach-item"><span><strong>' + esc(p.name) + '</strong> <span class="badge other">pending</span></span>' +
+        '<span><input type="password" id="apin-' + p.id + '" placeholder="Set PIN" inputmode="numeric" maxlength="12" style="width:110px">' +
+        ' <button type="button" class="btn small" data-approve="' + p.id + '">Approve</button></span></div>';
+    }).join('') : '<p class="hint">No pending requests.</p>';
+    var mems = Auth.members();
+    $('memList').innerHTML = mems.length ? mems.map(function (p) {
+      return '<div class="attach-item"><span><strong>' + esc(p.name) + '</strong></span>' +
+        '<span><button type="button" class="btn small" data-reset="' + p.id + '">Reset PIN</button> ' +
+        '<button type="button" class="link-btn" data-del="' + p.id + '">Remove</button></span></div>';
+    }).join('') : '<p class="hint">No approved members.</p>';
+  }
+
+  /* teacher login */
+  $('memberList').addEventListener('click', function (e) {
+    var open = e.target.closest ? e.target.closest('[data-open]') : null;
+    if (!open) return;
+    var id = open.getAttribute('data-open');
+    var prof = null;
+    Auth.members().forEach(function (p) { if (p.id === id) prof = p; });
+    if (!prof) return;
+    pinTarget = id;
+    $('pinWho').textContent = 'Teacher: ' + prof.name + ' \u2014 enter the PIN provided by your admin.';
+    $('pinInput').value = '';
+    $('pinMsg').textContent = '';
+    $('pinCard').classList.remove('hidden');
+    $('pinInput').focus();
+  });
+  $('btnPinGo').addEventListener('click', function () {
+    var r = Auth.verifyMember(pinTarget, $('pinInput').value);
+    if (r.error) { $('pinMsg').textContent = r.error; return; }
+    Auth.loginTeacher(pinTarget);
+    location.href = 'dashboard.html';
+  });
+  $('btnPinBack').addEventListener('click', function () {
+    $('pinCard').classList.add('hidden');
+    pinTarget = null;
+  });
+
+  /* access request */
+  $('btnRequest').addEventListener('click', function () {
+    var r = Auth.requestAccess($('reqName').value);
+    if (r.error) { $('reqMsg').textContent = r.error; return; }
+    $('reqName').value = '';
+    $('reqMsg').textContent = 'Request sent. The admin will approve it and issue your PIN.';
+    refresh();
+  });
+
+  /* admin setup */
+  $('btnSetup').addEventListener('click', function () {
+    var r = Auth.setupAdmin($('setupName').value, $('setupPin').value);
+    if (r.error) { $('setupMsg').textContent = r.error; return; }
+    Auth.loginAdmin();
+    refresh();
+  });
+
+  /* admin login */
+  $('btnAdminGo').addEventListener('click', function () {
+    var r = Auth.verifyAdmin($('adminPin').value);
+    if (r.error) { $('adminMsg').textContent = r.error; return; }
+    $('adminPin').value = '';
+    $('adminMsg').textContent = '';
+    Auth.loginAdmin();
+    refresh();
+  });
+  $('btnAdminOut').addEventListener('click', function () {
+    Auth.logout();
+    refresh();
+  });
+  $('lockBtn').addEventListener('click', function () {
+    Auth.setLocked(!Auth.isLocked());
+    refresh();
+  });
+  $('btnAddMember').addEventListener('click', function () {
+    var r = Auth.addDirect($('addName').value, $('addPin').value);
+    if (r.error) { $('addMsg').textContent = r.error; return; }
+    $('addName').value = '';
+    $('addPin').value = '';
+    $('addMsg').textContent = 'Member added and approved \u2014 share their PIN with them privately.';
+    refresh();
+  });
+  $('btnExpMembers').addEventListener('click', function () {
+    var data = Auth.exportMembers();
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'scheme-members.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  });
+  $('importMembers').addEventListener('change', function () {
+    var f = $('importMembers').files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      try {
+        var r = Auth.importMembers(JSON.parse(rd.result));
+        if (r.error) { $('impMsg').textContent = r.error; }
+        else { $('impMsg').textContent = 'Members imported: ' + r.added + ' added, ' + r.updated + ' updated. Log in with your admin-issued PIN.'; }
+      } catch (e) { $('impMsg').textContent = 'Could not import: invalid file.'; }
+      $('importMembers').value = '';
+      refresh();
+    };
+    rd.readAsText(f);
+  });
+
+  /* admin panel actions (delegated: inputs are dynamic) */
+  $('adminPanel').addEventListener('click', function (e) {
+    var ap = e.target.closest ? e.target.closest('[data-approve]') : null;
+    var rs = e.target.closest ? e.target.closest('[data-reset]') : null;
+    var del = e.target.closest ? e.target.closest('[data-del]') : null;
+    if (ap) {
+      var id = ap.getAttribute('data-approve');
+      var pinEl = $('apin-' + id);
+      var r = Auth.approve(id, pinEl ? pinEl.value : '');
+      if (r.error) { alert(r.error); return; }
+      alert('Approved. Member PIN set \u2014 share it with the teacher privately.');
+      refresh();
+      return;
+    }
+    if (rs) {
+      var rid = rs.getAttribute('data-reset');
+      var np = prompt('Enter the new PIN for this member (min 4 digits):');
+      if (np === null) return;
+      var r2 = Auth.resetPin(rid, np);
+      if (r2.error) { alert(r2.error); return; }
+      alert('PIN reset \u2014 share the new PIN with the teacher privately.');
+      refresh();
+      return;
+    }
+    if (del) {
+      var did = del.getAttribute('data-del');
+      var nm = '';
+      Auth.members().forEach(function (p) { if (p.id === did) nm = p.name; });
+      if (!confirm('Remove "' + nm + '" and ALL their schemes and documents on this browser?')) return;
+      Auth.remove(did);
+      refresh();
+    }
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>

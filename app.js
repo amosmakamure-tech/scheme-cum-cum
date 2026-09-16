@@ -141,6 +141,19 @@ lg_topic: { en: 'Topic / Content', sh: 'Musoro / Zvirimo', nd: 'Isihloko / Okuqu
 lg_obj: { en: 'Objectives (Knowledge / Skills / Values / Indicators / Assumed knowledge)', sh: 'Zvinangwa (Ruzivo / Unyanzvi / Hunhu / Zviratidzo / Ruzivo rwavepo)', nd: 'Izinjongo (Ulwazi / Amakhono / Isimilo / Izinkomba / Ulwazi oluvele lukhona)' },
 lg_comp: { en: 'Competences / Skills (from the syllabus)', sh: 'Hunyanzvi (kubva musilabhasi)', nd: 'Amakhono (avela kusilabhasi)' },
 lg_ref: { en: 'References / Media', sh: 'Mareferensi', nd: 'Imithombo' },
+entry_cross: { en: 'Cross-cutting themes (separate with ;)', sh: 'Misoro yakabatana (patswa ne ;)', nd: 'Izihloko ezixhumene (hlukanisa nge ;)' },
+ph_cross: { en: 'e.g. Heritage studies; Environmental sustainability', sh: 'e.g. Zvidzidzo zvenhaka; Kuchengetedza nharaunda', nd: 'e.g. Izifundo zamagugu; Ukusimama kwemvelo' },
+cmp_cross_label: { en: 'Cross-cutting theme', sh: 'Misoro yakabatana', nd: 'Izihloko ezixhumene' },
+cmp_cross_auto: { en: 'Auto-detect from syllabus / topic', sh: 'Tsanangura kubva musilabhasi/musoro', nd: 'Thola ngokuzenzakalelayo kusilabhasi/isihloko' },
+cmp_cross_none: { en: 'None', sh: 'Hakuna', nd: 'Akukho' },
+th_ict: { en: 'ICT', sh: 'ICT', nd: 'I-ICT' },
+th_gender: { en: 'Gender equality', sh: 'Kuenzana kwevanhukadzi nevanhurume', nd: 'Ukulingana ngobulili' },
+th_hiv: { en: 'HIV and AIDS', sh: 'HIV neAIDS', nd: 'I-AIDS ne-HIV' },
+th_rights: { en: 'Human rights', sh: 'Kodzero dzevanhu', nd: 'Amalungelo abantu' },
+th_env: { en: 'Environmental sustainability', sh: 'Kuchengetedza nharaunda', nd: 'Ukusimama kwemvelo' },
+th_disaster: { en: 'Disaster risk reduction', sh: 'Kuderedza njodzi', nd: 'Ukunciphisa ubungozi' },
+th_finance: { en: 'Financial literacy', sh: 'Ruzivo rwezvemari', nd: 'Ulwazi lwezezimali' },
+th_heritage: { en: 'Heritage studies', sh: 'Zvidzidzo zvenhaka', nd: 'Izifundo zamagugu' },
 lg_meth: { en: 'Methods and Activities', sh: 'Nzira neMabasa', nd: 'Izindlela leMisebenzi' },
 lg_eval: { en: 'Evaluation', sh: 'Ongororo', nd: 'Ukuhlola' },
 entry_title: { en: 'Week Entry', sh: 'Chidzidzo', nd: 'Isifundo' },
@@ -290,7 +303,7 @@ function entryCard(r, idx) {
     return '<button type="button" class="chip' + (on ? ' active' : '') + '" data-comp="' + esc(c) + '"' + disabled + '>' + esc(translateComp(c, state.uiLang)) + '</button>';
   }).join('');
   var themes = THEME_SUGGEST.map(function (t) {
-    return '<button type="button" class="chip" data-theme="' + esc(t) + '"' + disabled + '>+ ' + esc(t) + '</button>';
+    return '<button type="button" class="chip" data-theme="' + esc(t) + '"' + disabled + '>+ ' + esc(translateTheme(t, state.uiLang)) + '</button>';
   }).join('');
   var customComps = r.competencies.filter(function (c) { return COMP_SUGGEST.indexOf(c) === -1; }).join(', ');
 
@@ -316,7 +329,7 @@ function entryCard(r, idx) {
 
     '<fieldset><legend>' + esc(T('lg_topic')) + '</legend>' +
       field('Topic name', r.id, 'topic', r.topic, 'e.g. Temperature and Fermentation', '', readonly) +
-      field('Cross-cutting themes (separate with ;)', r.id, 'cross', r.cross, 'e.g. Heritage studies; Environmental sustainability', '', readonly) +
+      field(T('entry_cross'), r.id, 'cross', r.cross, T('ph_cross'), '', readonly) +
       '<div class="comp-chips">' + themes + '</div>' +
     '</fieldset>' +
 

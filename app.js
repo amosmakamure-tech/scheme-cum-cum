@@ -269,10 +269,11 @@ var COMP_SUGGEST = ['Critical thinking', 'Problem-solving', 'Practical skills',
 var THEME_SUGGEST = ['ICT', 'Gender equality', 'HIV and AIDS', 'Human rights',
   'Environmental sustainability', 'Disaster risk reduction', 'Financial literacy', 'Heritage studies'];
 
-function field(label, rowId, name, val, ph, rows) {
+function field(label, rowId, name, val, ph, rows, ro) {
+  var att = ro ? ' readonly' : '';
   var input = rows
-    ? '<textarea data-field="' + name + '" rows="' + rows + '" placeholder="' + esc(ph || '') + '">' + esc(val) + '</textarea>'
-    : '<input type="text" data-field="' + name + '" value="' + esc(val) + '" placeholder="' + esc(ph || '') + '">';
+    ? '<textarea data-field="' + name + '" rows="' + rows + '" placeholder="' + esc(ph || '') + '"' + att + '>' + esc(val) + '</textarea>'
+    : '<input type="text" data-field="' + name + '" value="' + esc(val) + '" placeholder="' + esc(ph || '') + '"' + att + '>';
   return '<label>' + label + input + '</label>';
 }
 
@@ -280,13 +281,13 @@ function entryCard(r, idx) {
   var isView = state.editMode === 'view';
   var isEdit = state.editMode === 'edit';
   var isDelete = state.editMode === 'delete';
-  var disabled = isView ? ' disabled' : '';
-  var readonly = isView ? ' readonly' : '';
+  var disabled = isEdit ? '' : ' disabled';
+  var readonly = isEdit ? '' : ' readonly';
   var delBtnStyle = isDelete ? ' style="background:#c00;color:#fff;"' : '';
   
   var comps = COMP_SUGGEST.map(function (c) {
     var on = r.competencies.indexOf(c) !== -1;
-    return '<button type="button" class="chip' + (on ? ' active' : '') + '" data-comp="' + esc(c) + '"' + disabled + '>' + esc(c) + '</button>';
+    return '<button type="button" class="chip' + (on ? ' active' : '') + '" data-comp="' + esc(c) + '"' + disabled + '>' + esc(translateComp(c, state.uiLang)) + '</button>';
   }).join('');
   var themes = THEME_SUGGEST.map(function (t) {
     return '<button type="button" class="chip" data-theme="' + esc(t) + '"' + disabled + '>+ ' + esc(t) + '</button>';
@@ -303,7 +304,7 @@ function entryCard(r, idx) {
         '<button type="button" data-act="up" title="Move up"' + disabled + '>\u25B2</button>' +
         '<button type="button" data-act="down" title="Move down"' + disabled + '>\u25BC</button>' +
         '<button type="button" data-act="dup" title="Duplicate"' + disabled + '>' + esc(T('btn_dup')) + '</button>' +
-        '<button type="button" data-act="del" title="Delete"' + delBtnStyle + (isView ? ' disabled' : '') + '>' + esc(T('btn_del')) + '</button>' +
+        '<button type="button" data-act="del" title="Delete"' + delBtnStyle + (isDelete ? '' : ' disabled') + '>' + esc(T('btn_del')) + '</button>' +
       '</span></div>' +
 
     '<fieldset><legend>' + esc(T('lg_week')) + '</legend><div class="inline-4">' +
@@ -339,7 +340,7 @@ function entryCard(r, idx) {
       field('Community expert / video', r.id, 'community', r.community, 'e.g. Video: Sekuru Chiweshe brewing', 2, readonly) +
       field('Digital resources (if any)', r.id, 'digital', r.digital, '', 2, readonly) +
       field('Textbooks with page references', r.id, 'textbooks', r.textbooks, 'e.g. New Combined Science Form 2, pp. 41\u201343', 2, readonly) +
-      '<button type="button" class="btn small" data-act="attach"' + readonly + '>' + esc(T('btn_attach')) + '</button>' +
+      '<button type="button" class="btn small" data-act="attach"' + disabled + '>' + esc(T('btn_attach')) + '</button>' +
 
     '</fieldset>' +
 
@@ -640,6 +641,173 @@ var METHOD_COMP = {
   'Collaborative Learning': 'Collaboration', 'Project-Based Learning': 'Creativity',
   'Storytelling': 'Cultural competence', 'Community-Based': 'Cultural competence'
 };
+/* ---------- translation dictionaries ---------- */
+var THEME_DICT = {
+  'ICT': { en: 'ICT', sh: 'ICT', nd: 'I-ICT' },
+  'Environmental sustainability': { en: 'Environmental sustainability', sh: 'Kuchengetedza nharaunda', nd: 'Ukusimama kwemvelo' },
+  'HIV and AIDS': { en: 'HIV and AIDS', sh: 'HIV neAIDS', nd: 'I-AIDS ne-HIV' },
+  'Gender equality': { en: 'Gender equality', sh: 'Kuenzana kwevanhukadzi nevanhurume', nd: 'Ukulingana ngobulili' },
+  'Human rights': { en: 'Human rights', sh: 'Kodzero dzevanhu', nd: 'Amalungelo abantu' },
+  'Disaster risk reduction': { en: 'Disaster risk reduction', sh: 'Kuderedza njodzi', nd: 'Ukunciphisa ubungozi' },
+  'Financial literacy': { en: 'Financial literacy', sh: 'Ruzivo rwezvemari', nd: 'Ulwazi lwezezimali' },
+  'Heritage studies': { en: 'Heritage studies', sh: 'Zvidzidzo zvenhaka', nd: 'Izifundo zamagugu' }
+};
+var COMP_DICT = {
+  'Critical thinking': { en: 'Critical thinking', sh: 'Kufunga kwakadzama', nd: 'Ukucabanga okujulile' },
+  'Problem-solving': { en: 'Problem-solving', sh: 'Kugadzirisa matambudziko', nd: 'Ukuxazulula izinkinga' },
+  'Practical skills': { en: 'Practical skills', sh: 'Unyanzvi hwekuita', nd: 'Amakhono okwenza' },
+  'Cultural competence': { en: 'Cultural competence', sh: 'Ruzivo rwetsika nemagariro', nd: 'Ukhono lwamasiko' },
+  'Communication': { en: 'Communication', sh: 'Kukurukurirana', nd: 'Ukuxhumana' },
+  'Collaboration': { en: 'Collaboration', sh: 'Kushandira pamwe', nd: 'Ukusebenzisana' },
+  'Creativity': { en: 'Creativity', sh: 'Kugadzira zvitsva', nd: 'Ubuciko bokudala' },
+  'Digital literacy': { en: 'Digital literacy', sh: 'Ruzivo rwedhijitari', nd: 'Ulwazi lwedijithali' },
+  'Assessment': { en: 'Assessment', sh: 'Kuongorora', nd: 'Ukuhlola' },
+  'Exam technique': { en: 'Exam technique', sh: 'Nzira yemabvunzo', nd: 'Ubuchule bokubhala izivivinyo' }
+};
+/* common Zimbabwean syllabus topics: English → ChiShona / IsiNdebele
+   applied when compiling indigenous-language topics typed in English */
+var TOPIC_DICT = [
+  ['and', 'ne', 'le'],
+  ['folktales', 'Ngano', 'Izinganekwane'],
+  ['proverbs', 'Tsumo', 'Izaga'],
+  ['idioms', 'Madimikira', 'Izisho'],
+  ['riddles', 'Zvirahwe', 'Iziphicaphicwano'],
+  ['poetry', 'Nhetembo', 'Izinkondlo'],
+  ['oral poetry', 'Nhetembo dzomuromo', 'Izinkondlo zomlomo'],
+  ['oral literature', 'Zvinyorwa zvomuromo', 'Imbali yomlomo'],
+  ['oral traditions', 'Tsika dzokutaurwa', 'Amasiko omlomo'],
+  ['storytelling', 'Kurondedzera ngano', 'Ukulandisa izindaba'],
+  ['songs', 'Nziyo', 'Amaculo'],
+  ['traditional songs', 'Nziyo dzechivanhu', 'Amaculo endabuko'],
+  ['traditional dance', 'Kutamba kwechivanhu', 'Ukugida kwendabuko'],
+  ['music', 'Mimhanzi', 'Umculo'],
+  ['drama', 'Mutambo', 'Umdlalo'],
+  ['theatre', 'Mutambo', 'Umdlalo'],
+  ['culture', 'Tsika', 'Isiko'],
+  ['traditions', 'Tsika', 'Amasiko'],
+  ['customs', 'Miitiro', 'Amasiko'],
+  ['heritage', 'Nhaka', 'Amagugu'],
+  ['indigenous knowledge', 'Zivo yechivanhu', 'Ulwazi lwendabuko'],
+  ['indigenous knowledge systems', 'Nzira dzezivo yechivanhu', 'Izinhlelo zolwazi lwendabuko'],
+  ['totems', 'Mitupo', 'Izithopho'],
+  ['clans', 'Madzinza', 'Izizwe'],
+  ['kinship', 'Ukama', 'Ubuhlobo'],
+  ['family', 'Mhuri', 'Umndeni'],
+  ['marriage', 'Muchato', 'Umshado'],
+  ['traditional marriage', 'Muchato wechivanhu', 'Umshado wendabuko'],
+  ['initiation', 'Dzindo', 'Ukuphuphuthelwa'],
+  ['ancestors', 'Vadzimu', 'Amadlozi'],
+  ['ancestral spirits', 'Vadzimu', 'Amadlozi'],
+  ['religion', 'Chitendero', 'Inkolo'],
+  ['traditional religion', 'Chitendero chechivanhu', 'Inkolo yendabuko'],
+  ['rainmaking', 'Kukumbira mvura', 'Ukwenza izulu'],
+  ['witchcraft', 'Uroyi', 'Ubuthakathi'],
+  ['medicine', 'Mushonga', 'Umuthi'],
+  ['traditional medicine', 'Mishonga yechivanhu', 'Imithi yendabuko'],
+  ['herbal medicine', 'Mushonga wemiti', 'Umuthi wezitshalo'],
+  ['healers', "N'anga", 'Izinyanga'],
+  ['agriculture', 'Zvekurima', 'Ezolimo'],
+  ['farming', 'Kurima', 'Ukulima'],
+  ['crop production', 'Kurima zvirimwa', 'Ukutshala izitshalo'],
+  ['hunting', 'Kuvhima', 'Ukuzingela'],
+  ['fishing', 'Kuredza', 'Ukudoba'],
+  ['iron smelting', 'Kunyungudutsa simbi', 'Ukuncibilikisa insimbi'],
+  ['pottery', 'Kuumba hari', 'Ukubumba izimbiza'],
+  ['basketry', 'Kuruka matengu', 'Ukuluka ubhasikidi'],
+  ['brewing', 'Kubika doro', 'Ukugayisa utshwala'],
+  ['traditional brewing', 'Kubika doro rechivanhu', 'Ukugayisa utshwala bendabuko'],
+  ['crafts', 'Mabasa emaoko', 'Imisebenzi yezandla'],
+  ['art', 'Unyanzvi', 'Ubuciko'],
+  ['sculpture', 'Chivezwa', 'Umfanekiso oqoshiweyo'],
+  ['carving', 'Kuveza', 'Ukubaza'],
+  ['weaving', 'Kuruka', 'Ukuluka'],
+  ['textiles', 'Machira', 'Izindwangu'],
+  ['building', 'Kuvaka', 'Ukwakha'],
+  ['traditional housing', 'Dzimba dzechivanhu', 'Izindlu zendabuko'],
+  ['kraal', 'Danga', 'Isibaya'],
+  ['homestead', 'Musha', 'Umuzi'],
+  ['village', 'Musha', 'Ubuhlali'],
+  ['community', 'Nharaunda', 'Umphakathi'],
+  ['chief', 'Ishe', 'Inkosi'],
+  ['headman', 'Sadunhu', 'Induna'],
+  ['leadership', 'Hutungamiri', 'Ubuholi'],
+  ['governance', 'Hutongi', 'Ukubusa'],
+  ['law', 'Mutemo', 'Umthetho'],
+  ['justice', 'Ruramisiro', 'Ubulungiswa'],
+  ['conflict resolution', 'Kugadzirisa kupokana', 'Ukuxazulula izingxabano'],
+  ['environment', 'Zvakatipoteredza', 'Imvelo'],
+  ['environmental conservation', 'Kuchengetedza zvakatipoteredza', 'Ukulondoloza imvelo'],
+  ['pollution', 'Kusvibiswa', 'Ukungcoliswa'],
+  ['climate change', 'Kushanduka kwemamiriro ekunze', 'Ukuguquka kwesimo sezulu'],
+  ['drought', 'Rwadziko', 'Isomiso'],
+  ['floods', 'Mafashamo', 'Uzamcolo'],
+  ['cyclones', 'Madutu', 'Iziphepho'],
+  ['disasters', 'Njodzi', 'Iingozi'],
+  ['diseases', 'Zvirwere', 'Izifo'],
+  ['health', 'Utano', 'Impilo'],
+  ['hygiene', 'Hutsanana', 'Inhlanzeko'],
+  ['sanitation', 'Hutsanana', 'Inhlanzeko'],
+  ['water', 'Mvura', 'Amanzi'],
+  ['waste management', 'Utariri hwemarara', 'Ukulawula imfucuza'],
+  ['conservation', 'Kuchengetedza', 'Ukulondoloza'],
+  ['technology', 'Tekinoroji', 'Ubuchwepheshe'],
+  ['digital', 'Dijitari', 'Dijithali'],
+  ['money', 'Mari', 'Imali'],
+  ['budgeting', 'Kuronga mari', 'Ukuhlela isabelomali'],
+  ['savings', 'Kuchengetedza mari', 'Ukulondoloza imali'],
+  ['entrepreneurship', 'Kuita bhizinesi', 'Ukwenza ibhizinisi'],
+  ['business', 'Bhizinesi', 'Ibhizinisi'],
+  ['democracy', 'Demokirasi', 'Idemokhrasi'],
+  ['constitution', 'Mutemo-mukuru', 'Umthethosisekelo'],
+  ['gender', 'Bulili', 'Ubulili'],
+  ['women', 'Vakadzi', 'Abesifazane'],
+  ['men', 'Varume', 'Amadoda'],
+  ['youth', 'Vechidiki', 'Intsha'],
+  ['elders', 'Vakuru', 'Abadala'],
+  ['children', 'Vana', 'Izingane'],
+  ['food', 'Zvokudya', 'Ukudla'],
+  ['nutrition', 'Kudya kwakanaka', 'Ukondla okuhle'],
+  ['forests', 'Masango', 'Amahlathi'],
+  ['soil', 'Ivhu', 'Umhlabathi'],
+  ['plants', 'Zvirimwa', 'Izitshalo'],
+  ['animals', 'Mhuka', 'Izilwane'],
+  ['fermentation', 'Kuvirwa', 'Ukuvutshelwa'],
+  ['energy', 'Simba', 'Amandla'],
+  ['heat', 'Kupisa', 'Ukushisa'],
+  ['weather', 'Mamiriro ekunze', 'Isimo sezulu'],
+  ['soil conservation', 'Kuchengetedza ivhu', 'Ukulondoloza inhlabathi']
+];
+function translateTheme(theme, lang) {
+  if (!lang || lang === 'en') return theme;
+  var t = THEME_DICT[theme];
+  return t && t[lang] ? t[lang] : theme;
+}
+function translateComp(comp, lang) {
+  if (!lang || lang === 'en') return comp;
+  var d = COMP_DICT[comp];
+  return d && d[lang] ? d[lang] : comp;
+}
+function translateCross(cross, lang) {
+  if (!lang || lang === 'en' || !cross) return cross;
+  return cross.split(';').map(function (t) { return translateTheme(t.trim(), lang); }).filter(Boolean).join('; ');
+}
+function translateCompetencies(comps, lang) {
+  if (!lang || lang === 'en' || !comps) return comps;
+  return comps.map(function (c) { return translateComp(c, lang); });
+}
+function translateTopic(text, lang) {
+  if (!lang || lang === 'en' || !text) return text;
+  var result = text;
+  /* longest phrases first so multi-word entries win over single words */
+  var ordered = TOPIC_DICT.slice().sort(function (a, b) { return b[0].length - a[0].length; });
+  ordered.forEach(function (entry) {
+    var enPhrase = entry[0], shPhrase = entry[1], ndPhrase = entry[2];
+    var replacement = lang === 'sh' ? shPhrase : lang === 'nd' ? ndPhrase : enPhrase;
+    var re = new RegExp('\\b' + enPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+    result = result.replace(re, replacement);
+  });
+  return result;
+}
 function fillT(s, t) { return String(s).split('{T}').join(t); }
 /* split a possibly lesson-suffixed topic back into base + lesson numbers */
 function baseTopic(label) {
@@ -650,11 +818,15 @@ function baseTopic(label) {
 /* redraft a row's generated content in another language.
    Teacher's own writing (notes, remarks, reflection, resources, times) is kept. */
 function regenerateRow(r, lang) {
+  if (!GEN[lang]) lang = 'en';
   var g = GEN[lang] || GEN.en;
   var t = baseTopic(r.topic);
-  var topic = t.base || r.topic;
-  r.lang = (GEN[lang] ? lang : 'en');
+  var base = t.base || r.topic;
+  // Translate English topic text into the target language (kept when already local)
+  var topic = translateTopic(base, lang);
+  r.lang = lang;
   r.topic = topic + (t.lesson ? ' \u2014 ' + g.lessonWord + ' ' + t.lesson.i + ' ' + g.ofWord + ' ' + t.lesson.n : '');
+  r.cross = translateCross(r.cross, lang);
   r.objK = fillT(g.objK, topic);
   r.objS = fillT(g.objS, topic);
   r.objV = fillT(g.objV, topic);
@@ -713,15 +885,21 @@ function readTopicRows() {
 }
 /* cross-cutting themes matched to topic/syllabus wording */
 var THEME_KEYS = {
-  'ICT': ['computer', 'digital', 'data', 'ict', 'binary', 'software', 'internet', 'technology'],
-  'Environmental sustainability': ['environment', 'pollution', 'conservation', 'soil', 'water', 'forest', 'climate', 'waste', 'energy'],
-  'HIV and AIDS': ['hiv', 'aids', 'health', 'disease', 'reproduction', 'reproductive', 'hygiene', 'stigma'],
-  'Gender equality': ['gender'],
-  'Human rights': ['rights', 'citizen', 'governance', 'democracy', 'constitution'],
-  'Disaster risk reduction': ['disaster', 'drought', 'flood', 'cyclone', 'safety', 'emergency'],
-  'Financial literacy': ['money', 'budget', 'business', 'market', 'profit', 'entrepreneur', 'income', 'saving'],
+  'ICT': ['computer', 'digital', 'data', 'ict', 'binary', 'software', 'internet', 'technology', 'tekinoroji'],
+  'Environmental sustainability': ['environment', 'pollution', 'conservation', 'soil', 'water', 'forest', 'climate', 'waste', 'energy',
+    'nharaunda', 'masango', 'sina', 'zvakatipoteredza', 'imvelo', 'amahlathi'],
+  'HIV and AIDS': ['hiv', 'aids', 'health', 'disease', 'reproduction', 'reproductive', 'hygiene', 'stigma',
+    'utano', 'zvirwere', 'zvikandemeso', 'impilo', 'izifo', 'sandulela'],
+  'Gender equality': ['gender', 'women', 'men', 'girl', 'boy', 'bulili', 'vakadzi', 'varume', 'abesifazane'],
+  'Human rights': ['rights', 'citizen', 'governance', 'democracy', 'constitution', 'kodzero', 'mutemo-mukuru', 'amalungelo', 'idemokhrasi'],
+  'Disaster risk reduction': ['disaster', 'drought', 'flood', 'cyclone', 'safety', 'emergency',
+    'njodzi', 'rwadziko', 'mafashamo', 'madutu', 'isomiso', 'uzamcolo', 'ingozi'],
+  'Financial literacy': ['money', 'budget', 'business', 'market', 'profit', 'entrepreneur', 'income', 'saving',
+    'mari', 'bhizinesi', 'budgeting', 'imali', 'ibhizinisi'],
   'Heritage studies': ['heritage', 'culture', 'traditional', 'indigenous', 'brewing', 'custom', 'artefact', 'artifact', 'elder',
-    'nhaka', 'ngano', 'tsumo', 'dare', 'nhimbe', 'isiko', 'amasiko', 'amadlozi', 'umkhonto', 'imbongi']
+    'nhaka', 'ngano', 'tsumo', 'dare', 'nhimbe', 'isiko', 'amasiko', 'amadlozi', 'umkhonto', 'imbongi',
+    'madimikira', 'zvirahwe', 'nhetembo', 'nziyo', 'mitupo', 'dzinza', 'ukama', 'vadzimu',
+    'izaga', 'izinganekwane', 'izisho', 'izinkondlo', 'amaculo', 'izithopho', 'ubuhlobo', 'amagugu', 'indabuko']
 };
 function detectThemes(topic, syllabus) {
   var hay = ((topic || '') + ' ' + (syllabus || '')).toLowerCase();
@@ -820,9 +998,12 @@ function compileRow(topic, code, mins, method, cross, weekNum, opt) {
   opt = opt || {};
   var g = GEN[opt.lang] || GEN.en;
   r.lang = opt.lang && GEN[opt.lang] ? opt.lang : 'en';
+  // Translate English topics/cross-cutting themes into the document language
+  var topicT = translateTopic(topic, r.lang);
+  var crossT = translateCross(cross, r.lang);
   // Use base topic (without subtopics) for objectives
-  var baseTopic = topic.split('\nSub-topics:')[0];
-  var label = topic + (opt.lesson ? ' \u2014 ' + g.lessonWord + ' ' + opt.lesson : '');
+  var baseTopic = topicT.split('\nSub-topics:')[0];
+  var label = topicT + (opt.lesson ? ' \u2014 ' + g.lessonWord + ' ' + opt.lesson : '');
   var intro = Math.max(3, Math.round(mins * 0.15));
   var concl = Math.max(3, Math.round(mins * 0.15));
   var dev = Math.max(5, mins - intro - concl);
@@ -842,7 +1023,7 @@ function compileRow(topic, code, mins, method, cross, weekNum, opt) {
   }
   Object.assign(r, {
     method: method, week: g.weekWord + ' ' + weekNum, period: '1', minutes: String(mins),
-    topic: label, cross: cross || '',
+    topic: label, cross: crossT || '',
     objK: fillT(g.objK, baseTopic),
     objS: fillT(g.objS, baseTopic),
     objV: fillT(g.objV, baseTopic),
@@ -947,29 +1128,28 @@ $('btnDoCompile').addEventListener('click', function () {
   }
   syncOverviewToInputs();
 
-  // Parse period range (e.g., "1-6" or "6")
+  // Parse period range (e.g., "2-6" = weeks 2 to 6, "6" = 6 weeks).
+  // "Starting week" overrides the start when no explicit range is given.
   var periodWeeks = ($('cmpPeriodWeeks') ? $('cmpPeriodWeeks').value : '').trim();
+  var explicitStart = parseInt(($('cmpStartWeek') ? $('cmpStartWeek').value : ''), 10);
+  if (isNaN(explicitStart) || explicitStart < 1) explicitStart = 0;
+  var maxWeek = 0;
+  state.rows.forEach(function (r) {
+    var m = String(r.week || '').match(/(\d+)/);
+    if (m) maxWeek = Math.max(maxWeek, parseInt(m[1], 10));
+  });
   var startWeek, endWeek;
-  var hasExplicitPeriod = periodWeeks !== '';
-  if (hasExplicitPeriod) {
-    if (periodWeeks.includes('-')) {
-      var parts = periodWeeks.split('-').map(function (s) { return parseInt(s.trim(), 10); });
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        startWeek = parts[0];
-        endWeek = parts[1];
-      }
-    } else {
-      var n = parseInt(periodWeeks, 10);
-      if (!isNaN(n)) { startWeek = 1; endWeek = n; }
-    }
+  if (periodWeeks.includes('-')) {
+    var parts = periodWeeks.split('-').map(function (s) { return parseInt(s.trim(), 10); });
+    startWeek = explicitStart > 0 ? explicitStart : (parts.length === 2 && !isNaN(parts[0]) ? parts[0] : maxWeek + 1);
+    endWeek = parts.length === 2 && !isNaN(parts[1]) && parts[1] >= startWeek ? parts[1] : startWeek;
+  } else if (periodWeeks !== '') {
+    var n = parseInt(periodWeeks, 10);
+    startWeek = explicitStart > 0 ? explicitStart : maxWeek + 1;
+    endWeek = !isNaN(n) && n > 0 ? startWeek + n - 1 : startWeek;
   } else {
-    // No explicit period: continue from highest existing week
-    var maxWeek = 0;
-    state.rows.forEach(function (r) {
-      var m = String(r.week || '').match(/(\d+)/);
-      if (m) maxWeek = Math.max(maxWeek, parseInt(m[1], 10));
-    });
-    startWeek = maxWeek + 1;
+    // No explicit period: continue from highest existing week, or user-specified start
+    startWeek = explicitStart > 0 ? explicitStart : maxWeek + 1;
     endWeek = startWeek;
   }
 
@@ -1008,11 +1188,10 @@ $('btnDoCompile').addEventListener('click', function () {
   var ofW = (GEN[lang] || GEN.en).ofWord;
   var currentWeek = startWeek;
   var lessonsInCurrentWeek = 0;
-  var weekIdx = 0; // index into weekEndings array
+  var weekIdx = 0;
 
   topics.forEach(function (p) {
     var cross = crossSel === 'auto' ? detectThemes(p.topic, syll).join('; ') : crossSel;
-    // Build textbook string: per-topic textbooks + shared textbook + syllabus pages
     var perTopicTextbooks = p.textbooks ? p.textbooks.split('\n').map(function (t) { return t.trim(); }).filter(Boolean).join('\n') : '';
     var syllabusPages = p.pages ? 'Syllabus pp. ' + p.pages : '';
     var tbParts = [];
@@ -1020,17 +1199,14 @@ $('btnDoCompile').addEventListener('click', function () {
     if (perTopicTextbooks) tbParts.push(perTopicTextbooks);
     if (syllabusPages) tbParts.push(syllabusPages);
     var tb = tbParts.join('\n');
-    // Topic label with subtopics only in topic column
     var topicLabel = p.topic + (p.subtopics ? '\nSub-topics: ' + p.subtopics : '');
     var g = GEN[lang] || GEN.en;
-    var lessonInWeek = 0;
     var lessonsToCreate = p.type === 'standalone' ? 1 : p.lessons;
     for (var i = 1; i <= lessonsToCreate; i++) {
       var thisWeekEnding = weekEndings[weekIdx] || '';
-      lessonInWeek++;
       state.rows.push(compileRow(topicLabel, p.code, mins, method, cross, currentWeek, {
         lang: lang,
-        lesson: (g.lessonWord + ' ' + lessonInWeek + ' ' + ofW + ' ' + lessonsPerWeek),
+        lesson: (g.lessonWord + ' ' + i + ' ' + ofW + ' ' + lessonsToCreate),
         textbooks: tb, resources: materials, community: expert, digital: digital,
         weekEnding: thisWeekEnding,
         isStandalone: p.type === 'standalone'
@@ -1039,7 +1215,6 @@ $('btnDoCompile').addEventListener('click', function () {
       if (lessonsInCurrentWeek >= lessonsPerWeek) {
         currentWeek++;
         lessonsInCurrentWeek = 0;
-        lessonInWeek = 0;
         weekIdx++;
       }
     }
@@ -1097,11 +1272,12 @@ function renderPreview() {
   $('schemeBody').innerHTML = state.rows.map(function (r) {
     var week = [r.week, r.period ? D('period') + ' ' + r.period : '', r.minutes ? '(' + r.minutes + ' ' + D('minutes') + ')' : '', r.weekEnding ? '<br>' + D('weekEnding') + ': ' + esc(r.weekEnding) : '']
       .filter(Boolean).join('<br>');
-    var topic = br(r.topic) + (r.cross && r.cross.trim() ? '<div><span class="sub">' + esc(D('cross')) + '</span> ' + br(r.cross) + '</div>' : '');
+    var docL = (state.docLang && GEN[state.docLang]) ? state.docLang : 'en';
+    var topic = br(r.topic) + (r.cross && r.cross.trim() ? '<div><span class="sub">' + esc(D('cross')) + '</span> ' + br(translateCross(r.cross, docL)) + '</div>' : '');
     var obj = sub(D('knowledge'), r.objK) + sub(D('skills'), r.objS) + sub(D('values'), r.objV) +
               sub(D('indicators'), r.indicators) + sub(D('assumed'), r.assumed);
     var comp = r.competencies.length
-      ? '<ul>' + r.competencies.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' : '';
+      ? '<ul>' + translateCompetencies(r.competencies, docL).map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' : '';
     var ref = sub(D('syllabus'), r.refCode) + sub(D('resources'), r.resources) +
               sub(D('expert'), r.community) + sub(D('digital'), r.digital) + sub(D('textbooks'), r.textbooks);
     var meth = (r.introMins || r.hook || r.ikLink)
@@ -1355,6 +1531,7 @@ $('btnWordTop').addEventListener('click', doWord);
 function csvCell(s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; }
 function rowCSV(r) {
   function L(k) { return D(k).replace(/:\s*$/, ''); }
+  var rl = (r.lang && GEN[r.lang]) ? r.lang : 'en';
   var week = [r.week, r.period, r.minutes, r.weekEnding].filter(Boolean).join(' | ');
   var obj =
     [L('knowledge') + ': ' + r.objK, L('skills') + ': ' + r.objS, L('values') + ': ' + r.objV,
@@ -1366,8 +1543,9 @@ function rowCSV(r) {
               L('concl') + '(' + r.conclMins + '): ' + r.closure].join(' | ');
   var ev = [L('obs') + ': ' + r.obs, L('assess') + ': ' + r.assessMethod,
             L('criteria') + ': ' + r.criteria, L('remarks') + ': ' + (r.rRemarks || '')].join(' | ');
-  return [week, r.topic + (r.cross ? ' [' + L('cross') + ' ' + r.cross + ']' : ''), obj,
-          r.competencies.join('; '), ref, meth, ev].map(csvCell).join(',');
+  var crossT = translateCross(r.cross, rl);
+  return [week, r.topic + (crossT ? ' [' + L('cross') + ' ' + crossT + ']' : ''), obj,
+          translateCompetencies(r.competencies, rl).join('; '), ref, meth, ev].map(csvCell).join(',');
 }
 function doCsv() {
   var head = ['col_week', 'col_topic', 'col_obj', 'col_comp', 'col_ref', 'col_meth', 'col_eval']
@@ -1482,7 +1660,7 @@ if (typeof location !== 'undefined' && location.hash) {
 }
 /* hook for automated checks */
 if (typeof window !== 'undefined') {
-  window.__scpb = { state: state, renderPreview: renderPreview, renderEntries: renderEntries, applyLang: applyLang, STR: STR, DOC: DOC, D: D, regenerateRow: regenerateRow, baseTopic: baseTopic, lib: function () { return lib; } };
+  window.__scpb = { state: state, renderPreview: renderPreview, renderEntries: renderEntries, applyLang: applyLang, STR: STR, DOC: DOC, D: D, regenerateRow: regenerateRow, baseTopic: baseTopic, translateTopic: translateTopic, translateCross: translateCross, translateComp: translateComp, translateCompetencies: translateCompetencies, lib: function () { return lib; } };
 }
 var APP_VERSION = '1.9.0';
 if ($('appVer')) $('appVer').textContent = 'v' + APP_VERSION;

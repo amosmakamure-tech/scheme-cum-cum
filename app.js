@@ -654,6 +654,245 @@ var METHOD_COMP = {
   'Collaborative Learning': 'Collaboration', 'Project-Based Learning': 'Creativity',
   'Storytelling': 'Cultural competence', 'Community-Based': 'Cultural competence'
 };
+/* alternate phrasings so consecutive lessons on the same topic differ.
+   Variant 0 reproduces the GEN template exactly; lessons cycle 1,2,3,... */
+var GEN_VAR = {
+en: {
+  objK: ['Explain key concepts of {T}', 'Describe the main ideas of {T}', 'Identify and state what {T} means'],
+  objS: ['Demonstrate {T} through guided practice and group tasks', 'Apply {T} in practical activities and exercises', 'Perform {T} step by step, checking accuracy against the criteria'],
+  objV: ['Appreciate the importance of {T} in everyday life and indigenous practices', 'Value the role of {T} in the community and culture', 'Show respect for knowledge and practices linked to {T}'],
+  indicators: ['7/10 learners will correctly explain {T} and complete the set tasks', 'Most learners will show {T} in their written and practical work', 'Learners will use {T} correctly and give an example from their lives'],
+  assumed: ['Learners recall earlier work linked to {T}', 'Learners know the basic background needed for {T}', 'Learners remember previous lessons and can connect them to {T}'],
+  hook: ['Display a puzzling picture or object related to {T}; ask: "What do you notice?"', 'Ask a riddle or quick question about {T} to stir curiosity', 'Show a short video/clip on {T} and collect learners\u2019 first thoughts'],
+  ikLink: ['Elicit a local or indigenous example, practice or proverb connected with {T}', 'Ask learners for a home/community example that illustrates {T}', 'Link {T} to a traditional practice or story learners already know'],
+  closure: ['Exit card: each learner writes one key point learned about {T}', 'Learners summarise {T} in two sentences to a partner', 'Quick recap: learners state one new thing they learned about {T}'],
+  obs: ['Can learners explain {T} and apply it in the tasks?', 'Do learners correctly carry out the steps of {T}?', 'Are learners confident discussing and demonstrating {T}?'],
+  assessMethod: ['Exit card and class exercise on {T}: learners show what they learned', 'Short written task and oral questions on {T}', 'Practical check: learners demonstrate {T} while the teacher observes'],
+  criteria: ['Learner accurately explains {T} and completes tasks correctly', 'Learner applies {T} with few errors and can correct mistakes', 'Learner shows {T} clearly and helps peers who struggle'],
+  methods: {
+  'Inquiry-Based': [
+    ['Pose a focus question on {T}; learners observe and record initial ideas',
+     'Groups investigate {T} using textbooks, repository sources and discussion',
+     'Groups present findings on {T}; class compares, questions and consolidates'],
+    ['Set a problem about {T}; learners predict what might happen',
+     'Pairs test their ideas about {T} using books and sources',
+     'Pairs report; class discusses and agrees on conclusions about {T}'],
+    ['Present a question card on {T} for groups to discuss',
+     'Groups gather evidence on {T} from the repository and textbooks',
+     'Groups explain their findings on {T}; class compares answers']],
+  'Experiential / Hands-on': [
+    ['Demonstrate {T} while learners observe and note the key steps',
+     'Groups practise {T} hands-on with available materials; teacher coaches',
+     'Groups display their {T} outcomes; class discusses what worked'],
+    ['Show the materials for {T} and name their uses',
+     'Groups handle materials and try out {T} step by step',
+     'Groups explain what happened with {T} and why'],
+    ['Do a quick demonstration of {T}; learners watch closely',
+     'Learners repeat the {T} procedure in their groups',
+     'Groups compare their {T} outcomes and note differences']],
+  'Collaborative Learning': [
+    ['Organise dare/nhimbe-style groups; assign {T} sub-tasks and roles',
+     'Groups co-operate on {T} tasks, practising Ubuntu/Unhu/Vumunhu',
+     'Groups report back on {T}; peers assess each contribution'],
+    ['Form mixed groups and assign each a small part of {T}',
+     'Groups help each other complete the {T} tasks',
+     'Groups trade their {T} work for peer feedback'],
+    ['Pair learners up to talk through {T} before starting',
+     'Pairs work on {T} together, sharing ideas',
+     'Pairs present {T}; the class adds and corrects']],
+  'Project-Based Learning': [
+    ['Present the {T} project task and success criteria; groups plan roles',
+     'Groups research and produce their {T} artefact, linking school content with heritage/traditional knowledge',
+     'Groups showcase {T} products; class assesses against the criteria'],
+    ['Introduce the {T} project and agree on success criteria',
+     'Teams draft a plan and assign roles to create their {T} product',
+     'Teams exhibit {T} work; the class assesses against the criteria'],
+    ['Outline the {T} project; teams brainstorm ideas first',
+     'Teams build and test their {T} product, improving it',
+     'Teams present {T}; feedback drives the next steps']],
+  'Storytelling': [
+    ['Elder/teacher narrates a story embodying {T}; learners listen for key ideas',
+     'Learners retell and analyse the {T} story for its embedded knowledge',
+     'Learners compose and share short {T} narratives with a moral'],
+    ['Read/tell a folk tale that carries ideas about {T}; learners listen',
+     'Learners retell the {T} story in their own words',
+     'Learners draw or act a moral point about {T} from the story'],
+    ['Start with an oral tradition/riddle linked to {T}',
+     'Learners unpack the meaning of {T} behind the words',
+     'Learners create their own short narrative/scenario for {T}']],
+  'Community-Based': [
+    ['Brief learners on the {T} community observation/interview task',
+     'Learners observe {T} in the community, interview knowledge holders and record',
+     'Class collates {T} findings and links them to syllabus concepts'],
+    ['Brief learners on the {T} community observation task',
+     'Learners carry out the {T} observation/interview and record',
+     'The class collates {T} findings and links them to the syllabus'],
+    ['Invite/share a local expert\u2019s account related to {T}',
+     'Learners note how {T} appears in their community',
+     'Learners present {T} examples; the class draws conclusions']]
+  }
+},
+sh: {
+  objK: ['Tsanangura pfungwa huru dze{T}', 'Rondedzera pfungwa huru dze{T}', 'Taura uye upe chirevo che{T}'],
+  objS: ['Ratidza {T} nemabasa anotungamirwa neeboka', 'Shandisa {T} muzviito nemabasa ekuita', 'Ita {T} nhanho nhanho uchinge uchienzanisa nemiyero'],
+  objV: ['Koshesa kukosha kwe{T} muhupenyu nemagariro', 'Koshesa kubatana kwe{T} nenharaunda netsika', 'Ratidza ruremekedzo kune ruzivo nemabasa ane chekuita ne{T}'],
+  indicators: ['Vadzidzi 7/10 vachatsanangura {T} nemazvo vapedza mabasa', 'Vazhinji vadzidzi vacharondedzera {T} mumabasa avo', 'Vadzidzi vachashandisa {T} nenzira kwayo uye vaipa muenzaniso'],
+  assumed: ['Vadzidzi vanorangarira zvidzidzo zvakapfuura zvine chekuita ne{T}', 'Vadzidzi vanoziva zvakakosha zvinodiwa pa{T}', 'Vadzidzi vanoyeuka zvidzidzo zvakapfuura zvine chekuita ne{T}'],
+  hook: ['Ratidza mufananidzo kana chinhu chinoshamisa chine chekuita ne{T}; bvunza: "Chii chamunoona?"', 'Bvunzai chirahwe kana mubvunzo unokurumidza pamusoro pe{T}', 'Ratidzai vhidhiyo kana kupfupika kwazvo pamusoro pe{T}; vakudzai maziso avo'],
+  ikLink: ['Bvunzai muenzaniso wemuno, tsika kana tsumo ine chekuita ne{T}', 'Bvunzai vadzidzi muenzaniso wekumba kunoisa pachena {T}', 'Batanidzai {T} netsika kana ngano yavakanzwa'],
+  closure: ['Kadhi rekubuda: mudzidzi mumwe nomumwe anonyora chinhu chimwe chaadzidza nezve{T}', 'Vadzidzi vanopfupikisa {T} mumitsara miviri kumumwe', 'Kudzokorora kunokurumidza: vadzidzi vanoti chinhu chimwe chavachadzidza nezve{T}'],
+  obs: ['Vadzidzi vanogona kutsanangura {T} nekuishandisa mumabasa here?', 'Vanodaidza matanho e{T} here?', 'Vanotaura neruzivo pamusoro pe{T} here?'],
+  assessMethod: ['Kadhi rekubuda nebasa remukirasi rezve{T}: vadzidzi vanoratidza zvavakadzidza', 'Basa rapfupi rekunyora nemibvunzo yemuromo pa{T}', 'Ongororo yezviito: vadzidzi vanoratidza {T} mudzidzisi achicherechedza'],
+  criteria: ['Mudzidzi anotsanangura {T} nemazvo apedza mabasa nemazvo', 'Mudzidzi anoshandisa {T} aine kukanganisa kushoma uye anogadzirisa', 'Mudzidzi anoratidza {T} zviri pachena uye anobatsira vezera'],
+  methods: {
+  'Inquiry-Based': [
+    ['Bvunzai mubvunzo wakanangana ne{T}; vadzidzi vacherechedze vanyora',
+     'Mapoka anoongorora {T} achishandisa mabhuku nokukurukurana',
+     'Mapoka anopa zvakawanikwa pa{T}; kirasi inoenzanisa yobvumirana'],
+    ['Isa dambudziko pamusoro pe{T}; vadzidzi vafembere zvichaitika',
+     'Mapoka anoedza mazano avo pa{T} vachishandisa mabhuku',
+     'Mapoka anodzosa; kirasi inokurukura yobvumirana pamusoro pe{T}'],
+    ['Bvunzai mubvunzo pa {T} kuti mapoka ataurirane',
+     'Mapoka anounganidza humbowo pa{T} kubva mudura nemabhuku',
+     'Mapoka anotsanangura zvavakawana pa{T}; kirasi inoenzanisa']],
+  'Experiential / Hands-on': [
+    ['Ratidzai {T} vadzidzi vacherechedza matanho makuru',
+     'Mapoka anoita {T} nemaoko nezvishandiso; mudzidzisi anotungamira',
+     'Mapoka anoratidza zvakabuda pa{T}; kirasi inokurukura zvashanda'],
+    ['Ratidzai zvishandiso zve{T} muchiziva ndaaano kushandiswa',
+     'Mapoka anobata zvishandiso achiedza {T} nhanho nhanho',
+     'Mapoka anotsanangura zvakaitika pa{T} uye nei'],
+    ['Itai kuratidzwa kunokurumidza kwe{T}; vadzidzi vacherechedze',
+     'Vadzidzi vanodzokorora maitiro e{T} mumapoka avo',
+     'Mapoka anoenzanisa zvakabuda pa{T} achiongorora misiyano']],
+  'Collaborative Learning': [
+    ['Gadzirai mapoka sedare/nhimbe; govanai mabasa e{T}',
+     'Mapoka anobatirana pa{T} achiita Ubuntu/Unhu/Vumunhu',
+     'Mapoka anodzoka ne{T}; vezera vanoongorora mipiro'],
+    ['Umai mapoka akasanganiswa mogoverana chidimbu che{T}',
+     'Mapoka anobatsirana kupedza mabasa e{T}',
+     'Mapoka anochinjana mabasa e{T} kuti vezera vape maonero'],
+    ['Batanidzai vadzidzi vaviri vaviri kutaurirana nezve{T}',
+     'Vaviri vaviri vanoshanda pamwe pa{T} vachigovana mazano',
+     'Vaviri vaviri vanopa {T}; kirasi inowedzera nekururamisa']],
+  'Project-Based Learning': [
+    ['Paisai basa reprojekti re{T} nemiyero; mapoka anoronga mabasa',
+     'Mapoka anotumbura {T} achibatanidza chikoro nenhaka',
+     'Mapoka anoratidza {T}; kirasi inoongorora ichitevera miyero'],
+    ['Sumanidzai projekti ye{T} mobvumirana pamusoro pebayiro',
+     'Zvikwata zvinoronga uye zvogoverana mabasa ekugadzira {T}',
+     'Zvikwata zvinokuratidza {T}; kirasi inoongorora'],
+    ['Rondedzerai projekti ye{T}; zvikwata zvinotanga kufunga mazano',
+     'Zvikwata zvinovaka zvichiedza chigadzirwa che{T} chichizvinatsa',
+     'Zvikwata zvinopa {T}; maonero anotungamira danho rinotevera']],
+  'Storytelling': [
+    ['Mukuru anorondedzera ngano ine {T}; vadzidzi vanoteerera pfungwa huru',
+     'Vadzidzi vanodudzira ngano ye{T} vachitsvaga zivo irimo',
+     'Vadzidzi vanonyora vachipa ngano pfupi dze{T}'],
+    ['Verengai/taurai ngano ine pfungwa dze{T}; vadzidzi vanoteerera',
+     'Vadzidzi vanodzokorora ngano ye{T} nemashoko avo vamene',
+     'Vadzidzi vanodhirowa kana kuita pfungwa ye{T} kubva mungano'],
+    ['Tangai netsika yomuromo/chirahwe chine chekuita ne{T}',
+     'Vadzidzi vanotsvaga chirevo che{T} chiri mumashoko',
+     'Vadzidzi vanogadzira nyaya pfupi inoratidza {T}']],
+  'Community-Based': [
+    ['Tsanangurirai basa rekucherechedza {T} munharaunda',
+     'Vadzidzi vanocherechedza {T} munharaunda, vabvunza vachengeti vezivo vanyora',
+     'Kirasi inounganidza zvakawanikwa pa{T} yozvibatanidza nechidzidzo'],
+    ['Tsanangurirai vadzidzi basa rekucherechedza {T} munharaunda',
+     'Vadzidzi vanoita yekucherechedza/bvunzurudzo ye{T} vanyora',
+     'Kirasi inounganidza zvakawanikwa pa{T} yochizvibatanidza nesilabhasi'],
+    ['Kokai/tsangurirai nyanzvi yemuno ine ruzivo rwe{T}',
+     'Vadzidzi vanocherekedza kuti {T} inoratidzika sei munharaunda',
+     'Vadzidzi vanopa mienzaniso ye{T}; kirasi inobvumirana pamhedzisiro']]
+  }
+},
+nd: {
+  objK: ['Chaza imiqondo eqakathekileyo ye{T}', 'Chaza imibono emikhulu ye{T}', 'Khomba njalo uchaze ukuthi {T} yini'],
+  objS: ['Khombisa {T} ngemisebenzi eqondisiweyo leyamaqembu', 'Sebenzisa i{T} emisebenzini lobuchule obusebenzayo', 'Yenza i{T} izinyathelo ngezinyathelo ulindeleke ukuthi ulungise uma kuphoswa'],
+  objV: ['Azisa ukubaluleka kwe{T} empilweni lasemasikweni', 'Yazisa ukusebenzana kwe{T} lomphakathi lenkcubeko', 'Bonisa inhlonipho kulwazi lezenzo ezihlangene le{T}'],
+  indicators: ['Abafundi aba-7 kwaba-10 bazachaza {T} ngendlela beqede imisebenzi', 'Inengi labafundi lizakhombisa i{T} emisebenzini yalo', 'Abafundi bazasebenzisa i{T} ngendlela benikeze isibonelo empilweni yabo'],
+  assumed: ['Abafundi bayakhumbula imfundiso edluleyo ephathelene le{T}', 'Abafundi balwazi ulwazi oluyisisekelo oludingekayo kwi{T}', 'Abafundi bayakhumbula izifundo ezedlulayo bangazixhumanisa le{T}'],
+  hook: ['Khombisa umfanekiso kumbe into exakayo ephathelene le{T}; buza: "Libonani?"', 'Buzani isiphicaphicano kumbe umbuzo osheshayo nge{T} ukuvusa inzalo', 'Khombisani ividiyo emfitshane nge{T} libuthele imibono yabo yokuqala'],
+  ikLink: ['Celani isibonelo sasendaweni, isiko kumbe isaga esiphathelene le{T}', 'Celani abafundi isibonelo sasemzini esiveza i{T}', 'Xhumanisani i{T} lokhu abasekugcine okwaziweyo'],
+  closure: ['Ikhadi lokuphuma: umfundi ngamunye ubhala iphuzu elilodwa alifunde nge{T}', 'Abafundi bafingqa i{T} ngemisho emibili kumlingani', 'Ukubuyekeza okusheshayo: abafundi batsho okutsha okukodwa abakufundileyo nge{T}'],
+  obs: ['Abafundi bayakwazi ukuchaza i{T} bayisebenzise emisebenzini na?', 'Bayayenza kahle indlela ye{T} na?', 'Bakhuluma ngokuzethemba bekhombisa i{T} na?'],
+  assessMethod: ['Ikhadi lokuphuma lomsebenzi wekilasi nge{T}: abafundi bakhombisa abakufundileyo', 'Umsebenzi ofitshane obhaliweyo lemibuzo yomlomo nge{T}', 'Ukuhlola ngokwenza: abafundi bakhombisa i{T} kanti uthisha uyababuka'],
+  criteria: ['Umfundi uchaza i{T} ngendlela eqondileyo aqede imisebenzi ngendlela', 'Umfundi usebenzisa i{T} ngamaphutha ambalwa akwazi ukulungisa', 'Umfundi ikhombisa i{T} ngokucacileyo abe esiza ontanga'],
+  methods: {
+  'Inquiry-Based': [
+    ['Buzani umbuzo oqondene le{T}; abafundi baqaphele babhale',
+     'Amaqembu aphenya nge{T} esebenzisa amabhuku exoxisana',
+     'Amaqembu ethula okutholakeleyo nge{T}; ikilasi iqhathanisa ivumelane'],
+    ['Bekani inkinga nge{T}; abafundi babikezela okungazakwenzeka',
+     'Ababili babili bavivinya imibono yabo nge{T} besebenzisa amabhuku',
+     'Ababili babili babika; ikilasi lixoxa livumelane nge{T}'],
+    ['Yethulani ikhadi lomba nge{T} ukuthi amaqembu axoxe',
+     'Amaqembu aqoqa ubufakazi nge{T} esuka ekhabetheni lamabhuku',
+     'Amaqembu achaza okutholakeleyo nge{T}; ikilasi liqhathanisa']],
+  'Experiential / Hands-on': [
+    ['Khombisani i{T} abafundi beqaphela izinyathelo eziqakathekileyo',
+     'Amaqembu enza i{T} ngezandla ngezisetshenziswa; umfundisi uqondisa',
+     'Amaqembu akhombisa okuvelayo nge{T}; ikilasi lidingida okuhambe kahle'],
+    ['Khombisani izisetshenziswa ze{T} liqambe ukuthi zisetshenziselwani',
+     'Amaqembu aphatha izisetshenziswa azame i{T} ngezinyathelo',
+     'Amaqembu achaza okwenzakalayo nge{T} lokuthi kungani'],
+    ['Yenzani umkhombiso osheshileyo we{T}; abafundi babuke kakuhle',
+     'Abafundi baphinda inqubo ye{T} emaqenjini abo',
+     'Amaqembu aqhathanisa okukhishwe nge{T} kaqaphela umehluko']],
+  'Collaborative Learning': [
+    ['Hlelani amaqembu njengedale; abelani imisebenzi ye{T}',
+     'Amaqembu asebenzisana ku{T} esenza Ubuntu/Unhu/Vumunhu',
+     'Amaqembu abuya nge{T}; ontanga bahlola iminikelo'],
+    ['Yakhelani amaqembu axubileyo labelani ingxenye encane ye{T}',
+     'Amaqembu asizana ukuqeda imisebenzi ye{T}',
+     'Amaqembu ashintshana ngomsebenzi we{T} ukuthola ukubuyekeza'],
+    ['Hlanganisani abafundi babili bobabili ukuthi babonisane nge{T}',
+     'Ababili bobabili basebenza ndawonye ku{T} bexoxiselana',
+     'Ababili bobabili bethula i{T}; ikilasi linezeza lalungise']],
+  'Project-Based Learning': [
+    ['Yethulani umsebenzi weprojekthi ye{T} lemigomo; amaqembu ahlela imisebenzi',
+     'Amaqembu enza i{T} ehlanganisa isikolo lamagugu',
+     'Amaqembu akhombisa i{T}; ikilasi lihlola lilandelela imigomo'],
+    ['Yethulani iphrojekthi ye{T} livumelane ngemigomo yokuphumelela',
+     'Amaqembu ahlela abelane imisebenzi yokwenza umkhiqizo we{T}',
+     'Amaqembu akhombisa umsebenzi we{T}; ikilasi lihiamba ngemigomo'],
+    ['Chazani iphrojekthi ye{T}; amaqembu aqala ngokucabanga imibono',
+     'Amaqembu ayakha avivinye umkhiqizo we{T} bewuthuthukisa',
+     'Amaqembu ethula i{T}; ukubuyekeza kuqondisa into elandelayo']],
+  'Storytelling': [
+    ['Ixhegu/umfundisi ulandisa ingano engenisa i{T}; abafundi balalele imiqondo emikhulu',
+     'Abafundi baphinda bahlaziye ingano ye{T} befuna ulwazi oluqukethweyo',
+     'Abafundi babhala babelane ngezingano ezimfitshane ze{T}'],
+    ['Fundayani/tsheleni inganekwane equkethe imicabango nge{T}; abafundi balalele',
+     'Abafundi baphinda ingano ye{T} ngamazwi abo',
+     'Abafundi badweba kumbe benze inhlonipho nge{T} evela enganekwaneni'],
+    ['Qalani ngesiko lomlomo/iphicaphicano elihlangene le{T}',
+     'Abafundi bayihlulunula indlela i{T} equkethe ngawo amagama',
+     'Abafundi bakha umlando omfitshane obonisa i{T}']],
+  'Community-Based': [
+    ['Chazani abafundi umsebenzi wokuqaphela i{T} emphakathini',
+     'Abafundi baqaphela i{T} emphakathini, babuza abagcini bolwazi babhale',
+     'Ikilasi liqoqa okutholakeleyo nge{T} likuhlanganise lesifundo'],
+    ['Chazani abafundi umsebenzi wokuqaphela i{T} emphakathini',
+     'Abafundi benza ukubona/ukubuza nge{T} babhale',
+     'Ikilasi liqoqa okutholakeleyo nge{T} likuxhumanisa lesilabhasi'],
+    ['Memani/belani inxusa lomphakathi elolwazi nge{T}',
+     'Abafundi bashaya phasi ukuthi i{T} ivele kanjani emphakathini',
+     'Abafundi bethula izibonelo ze{T}; ikilasi libeza isiphetho']]
+  }
+}
+};
+function varPick(g, lang, key, i) {
+  var bank = GEN_VAR[lang] && GEN_VAR[lang][key];
+  if (!bank || !bank.length) return g[key];
+  return bank[(i - 1) % bank.length];
+}
+function varActs(g, lang, method, i) {
+  var bank = GEN_VAR[lang] && GEN_VAR[lang].methods && GEN_VAR[lang].methods[method];
+  if (!bank || !bank.length) return (g.methods[method] || g.methods['Inquiry-Based']).slice();
+  return bank[(i - 1) % bank.length].slice();
+}
 /* ---------- translation dictionaries ---------- */
 var THEME_DICT = {
   'ICT': { en: 'ICT', sh: 'ICT', nd: 'I-ICT' },
@@ -835,26 +1074,27 @@ function regenerateRow(r, lang) {
   var g = GEN[lang] || GEN.en;
   var t = baseTopic(r.topic);
   var base = t.base || r.topic;
+  var lessonIdx = t.lesson ? t.lesson.i : 1;
   // Translate English topic text into the target language (kept when already local)
   var topic = translateTopic(base, lang);
   r.lang = lang;
   r.topic = topic + (t.lesson ? ' \u2014 ' + g.lessonWord + ' ' + t.lesson.i + ' ' + g.ofWord + ' ' + t.lesson.n : '');
   r.cross = translateCross(r.cross, lang);
-  r.objK = fillT(g.objK, topic);
-  r.objS = fillT(g.objS, topic);
-  r.objV = fillT(g.objV, topic);
-  r.indicators = fillT(g.indicators, topic);
-  r.assumed = fillT(g.assumed, topic);
-  var acts = (g.methods[r.method] || g.methods['Inquiry-Based']).slice();
-  r.hook = fillT(g.hook, topic);
-  r.ikLink = fillT(g.ikLink, topic);
+  r.objK = fillT(varPick(g, lang, 'objK', lessonIdx), topic);
+  r.objS = fillT(varPick(g, lang, 'objS', lessonIdx), topic);
+  r.objV = fillT(varPick(g, lang, 'objV', lessonIdx), topic);
+  r.indicators = fillT(varPick(g, lang, 'indicators', lessonIdx), topic);
+  r.assumed = fillT(varPick(g, lang, 'assumed', lessonIdx), topic);
+  var acts = varActs(g, lang, r.method, lessonIdx);
+  r.hook = fillT(varPick(g, lang, 'hook', lessonIdx), topic);
+  r.ikLink = fillT(varPick(g, lang, 'ikLink', lessonIdx), topic);
   r.act1 = fillT(acts[0], topic);
   r.act2 = fillT(acts[1], topic);
   r.act3 = fillT(acts[2], topic);
-  r.closure = fillT(g.closure, topic);
-  r.obs = fillT(g.obs, topic);
-  r.assessMethod = fillT(g.assessMethod, topic);
-  r.criteria = fillT(g.criteria, topic);
+  r.closure = fillT(varPick(g, lang, 'closure', lessonIdx), topic);
+  r.obs = fillT(varPick(g, lang, 'obs', lessonIdx), topic);
+  r.assessMethod = fillT(varPick(g, lang, 'assessMethod', lessonIdx), topic);
+  r.criteria = fillT(varPick(g, lang, 'criteria', lessonIdx), topic);
   return r;
 }
 /* structured topic grid in the compile modal */
@@ -1011,17 +1251,20 @@ function compileRow(topic, code, mins, method, cross, weekNum, opt) {
   opt = opt || {};
   var g = GEN[opt.lang] || GEN.en;
   r.lang = opt.lang && GEN[opt.lang] ? opt.lang : 'en';
+  var lessonIdx = opt.lessonIdx || 1;
   // Translate English topics/cross-cutting themes into the document language
   var topicT = translateTopic(topic, r.lang);
   var crossT = translateCross(cross, r.lang);
-  // Use base topic (without subtopics) for objectives
+  // Base topic name appears in the label; one subtopic at a time becomes the {T} focus
   var baseTopic = topicT.split('\nSub-topics:')[0];
-  var label = topicT + (opt.lesson ? ' \u2014 ' + g.lessonWord + ' ' + opt.lesson : '');
+  var subT = opt.subtopic ? translateTopic(opt.subtopic, r.lang) : '';
+  var focus = subT || baseTopic;
+  var label = baseTopic + (subT && subT !== baseTopic ? ' \u2014 ' + subT : '') + (opt.lesson ? ' \u2014 ' + g.lessonWord + ' ' + opt.lesson : '');
   var intro = Math.max(3, Math.round(mins * 0.15));
   var concl = Math.max(3, Math.round(mins * 0.15));
   var dev = Math.max(5, mins - intro - concl);
   var a1 = Math.floor(dev / 3), a2 = Math.floor(dev / 3), a3 = dev - a1 - a2;
-  var acts = (g.methods[method] || g.methods['Inquiry-Based']).slice();
+  var acts = varActs(g, r.lang, method, lessonIdx);
   var comps = ['Critical thinking', 'Problem-solving'];
   var mc = METHOD_COMP[method];
   if (mc && comps.indexOf(mc) === -1) comps.push(mc);
@@ -1032,32 +1275,33 @@ function compileRow(topic, code, mins, method, cross, weekNum, opt) {
       'Review and self-assess answers using marking scheme',
       'Teacher provides feedback and identifies areas for improvement'
     ];
+    focus = baseTopic;
     label = baseTopic + (opt.lesson ? ' \u2014 ' + g.lessonWord + ' ' + opt.lesson : '') + ' (Test/Exercise)';
   }
   Object.assign(r, {
     method: method, week: g.weekWord + ' ' + weekNum, period: '1', minutes: String(mins),
     topic: label, cross: crossT || '',
-    objK: fillT(g.objK, baseTopic),
-    objS: fillT(g.objS, baseTopic),
-    objV: fillT(g.objV, baseTopic),
-    indicators: fillT(g.indicators, baseTopic),
-    assumed: fillT(g.assumed, baseTopic),
+    objK: fillT(varPick(g, r.lang, 'objK', lessonIdx), focus),
+    objS: fillT(varPick(g, r.lang, 'objS', lessonIdx), focus),
+    objV: fillT(varPick(g, r.lang, 'objV', lessonIdx), focus),
+    indicators: fillT(varPick(g, r.lang, 'indicators', lessonIdx), focus),
+    assumed: fillT(varPick(g, r.lang, 'assumed', lessonIdx), focus),
     competencies: comps,
     refCode: code || '', resources: opt.resources || '',
     community: opt.community || '', digital: opt.digital || '', textbooks: opt.textbooks || '',
     weekEnding: opt.weekEnding || '',
     introMins: String(intro),
-    hook: fillT(g.hook, baseTopic),
-    ikLink: fillT(g.ikLink, baseTopic),
+    hook: fillT(varPick(g, r.lang, 'hook', lessonIdx), focus),
+    ikLink: fillT(varPick(g, r.lang, 'ikLink', lessonIdx), focus),
     devMins: String(dev),
-    act1: fillT(acts[0], baseTopic), act1t: a1 + ' ' + g.minWord,
-    act2: fillT(acts[1], baseTopic), act2t: a2 + ' ' + g.minWord,
-    act3: fillT(acts[2], baseTopic), act3t: a3 + ' ' + g.minWord,
+    act1: fillT(acts[0], focus), act1t: a1 + ' ' + g.minWord,
+    act2: fillT(acts[1], focus), act2t: a2 + ' ' + g.minWord,
+    act3: fillT(acts[2], focus), act3t: a3 + ' ' + g.minWord,
     conclMins: String(concl),
-    closure: fillT(g.closure, baseTopic),
-    obs: fillT(g.obs, baseTopic),
-    assessMethod: fillT(g.assessMethod, baseTopic),
-    criteria: fillT(g.criteria, baseTopic)
+    closure: fillT(varPick(g, r.lang, 'closure', lessonIdx), focus),
+    obs: fillT(varPick(g, r.lang, 'obs', lessonIdx), focus),
+    assessMethod: fillT(varPick(g, r.lang, 'assessMethod', lessonIdx), focus),
+    criteria: fillT(varPick(g, r.lang, 'criteria', lessonIdx), focus)
   });
   return r;
 }
@@ -1212,13 +1456,16 @@ $('btnDoCompile').addEventListener('click', function () {
     if (perTopicTextbooks) tbParts.push(perTopicTextbooks);
     if (syllabusPages) tbParts.push(syllabusPages);
     var tb = tbParts.join('\n');
-    var topicLabel = p.topic + (p.subtopics ? '\nSub-topics: ' + p.subtopics : '');
     var g = GEN[lang] || GEN.en;
+    var subtopics = (p.subtopics || '').split(';').map(function (s) { return s.trim(); }).filter(Boolean);
     var lessonsToCreate = p.type === 'standalone' ? 1 : p.lessons;
     for (var i = 1; i <= lessonsToCreate; i++) {
+      var sub = subtopics.length ? subtopics[(i - 1) % subtopics.length] : '';
       var thisWeekEnding = weekEndings[weekIdx] || '';
-      state.rows.push(compileRow(topicLabel, p.code, mins, method, cross, currentWeek, {
+      state.rows.push(compileRow(p.topic, p.code, mins, method, cross, currentWeek, {
         lang: lang,
+        lessonIdx: i,
+        subtopic: sub,
         lesson: (g.lessonWord + ' ' + i + ' ' + ofW + ' ' + lessonsToCreate),
         textbooks: tb, resources: materials, community: expert, digital: digital,
         weekEnding: thisWeekEnding,
